@@ -27,15 +27,15 @@ export function Home() {
         const inventories = await getInventories();
         const transpotTasks = await getTrasnportTasks();
 
-        let canvasW = 0;
-        let canvasH = 0;
+        let mapW = 0;
+        let mapH = 0;
 
         for (const location of locations) {
-            canvasW = Math.max(location.x + location.w, canvasW);
-            canvasH = Math.max(location.y + location.h, canvasH);
+            mapW = Math.max(location.x + location.w, mapW);
+            mapH = Math.max(location.y + location.h, mapH);
         }
 
-        setSize([canvasW, canvasH]);
+        setSize([mapW, mapH]);
 
         setAreas(areas);
         setLocations(locations);
@@ -63,7 +63,7 @@ export function Home() {
                         <CtrlGroup />
                     </>
             }
-            <ViewPort canvasW={size[0]} canvasH={size[1]} />
+            <ViewPort mapW={size[0]} mapH={size[1]} />
         </div>
     );
 }
