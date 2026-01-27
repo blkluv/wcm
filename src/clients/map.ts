@@ -6,7 +6,7 @@ import type { TransportTaskMapModel } from "../types/transportTask";
 import { doFetch } from "./helper";
 
 export async function getAreas(): Promise<AreaMapElementModel[]> {
-    const url = '/aras.json';
+    const url = '/areas.json';
     return await doFetch(url, [], { method: 'get' });
 }
 
