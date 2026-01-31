@@ -16,6 +16,6 @@ export function getLocationStyle(element: Rectangle) {
     };
 }
 
-export function intersect(element: Rectangle, offsetX: number, offsetY: number, bounds: Rectangle) {
-    return element.x + offsetX + element.w >= bounds.x && element.y + offsetY + element.h >= bounds.y && element.x + offsetX <= bounds.x + bounds.w && element.y + offsetY <= bounds.y + bounds.h;
+export function intersect(element: Rectangle, offsetX: number, offsetY: number, scale: number, bounds: Rectangle) {
+    return (element.x + element.w) * scale + offsetX >= bounds.x && (element.y + element.h) * scale + offsetY >= bounds.y && element.x * scale + offsetX <= bounds.x + bounds.w && element.y * scale + offsetY <= bounds.y + bounds.h;
 }

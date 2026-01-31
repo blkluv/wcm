@@ -28,3 +28,7 @@ const transportTaskStatusNames: { [key: number]: string } = {
     4: '已完成'
 };
 transportTaskStatusNames[-1] = '已中断';
+
+export function getYesOrNo(b: boolean) {
+    return b ? 'Y' : 'N';
+}
