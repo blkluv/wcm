@@ -138,7 +138,19 @@ export function LocationDialog(props: Props) {
     }
 
     return (
-        <Dialog maxWidth="xs" fullWidth open={open} PaperComponent={DraggableDialogPaperComponent} hideBackdrop disableEscapeKeyDown>
+        <Dialog maxWidth="xs" fullWidth open={open} PaperComponent={DraggableDialogPaperComponent} hideBackdrop disableEscapeKeyDown
+            slotProps={{
+                root: {
+                    sx: {
+                        pointerEvents: 'none'
+                    }
+                },
+                paper: {
+                    sx: {
+                        pointerEvents: 'auto'
+                    }
+                }
+            }}>
             <DialogTitle style={{ cursor: 'move' }}>{`库位 ${payload.code}`}</DialogTitle>
             <IconButton onClick={() => onClose()} sx={(theme) => ({ position: 'absolute', right: 8, top: 8, color: theme.palette.grey[500] })}>
                 <CloseIcon />
