@@ -7,6 +7,8 @@ import { getLocationElementId } from "../../types/location";
 import { type Rectangle } from "../../types/rectangle";
 import { intersect } from "../../types/map";
 import type { InventoryMapModel } from "../../types/inventory";
+import { LocationDialog } from "../../components/LocationDialog";
+import { useDialog } from "../../hooks/useDialog";
 
 interface Props {
     mapW: number;
@@ -18,6 +20,7 @@ const borderWidth = 150;
 export function ViewPort(props: Props) {
     const [viewBounds, setViewBounds] = useState<Rectangle>({ x: 0, y: 0, w: window.innerWidth, h: window.innerHeight });
     const dragNodeRef = useRef<HTMLDivElement | null>(null);
+    const dialog = useDialog();
 
     const scale = useAtomValue(scaleAtom);
     const locations = useAtomValue(locationsAtom);
@@ -57,15 +60,16 @@ export function ViewPort(props: Props) {
         setViewBounds(bounds);
     };
 
-    const handleClick = (evt: React.MouseEvent<HTMLDivElement, MouseEvent>, isDoubleClick: boolean) => {
+    const handleClick = async (evt: React.MouseEvent<HTMLDivElement, MouseEvent>, isDoubleClick: boolean) => {
         evt.preventDefault();
         if (evt.target) {
             const locationCode = (evt.target as HTMLDivElement).getAttribute('data-location-code');
             if (locationCode) {
                 if (isDoubleClick) {
-                    // TODO
+                    await dialog.open(LocationDialog, { code: locationCode });
+                } else {
+                    // TODO Show Task Arrow
                 }
-                console.log(locationCode);
             }
         }
     };

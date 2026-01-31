@@ -12,3 +12,7 @@ export interface LocationMapElementModel extends Rectangle {
 export function getLocationElementId(element: LocationMapElementModel) {
     return `${element.code}-location`;
 }
+
+export function getShelfModels(element: LocationMapElementModel) {
+    return element.shelfModels.join(',');
+}

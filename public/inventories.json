@@ -11,6 +11,28 @@
             "batchNo": "260128",
             "qty": 20,
             "status": 0
+        },
+        {
+            "code": "L002",
+            "shelfCode": "S02",
+            "supplierCode": "000000",
+            "supplierName": "?",
+            "materialCode": "B300063461",
+            "materialName": "?",
+            "batchNo": "260131",
+            "qty": 20,
+            "status": 0
+        },
+        {
+            "code": "L003",
+            "shelfCode": "S02",
+            "supplierCode": "000000",
+            "supplierName": "?",
+            "materialCode": "B300063461",
+            "materialName": "?",
+            "batchNo": "260131",
+            "qty": 20,
+            "status": 0
         }
     ]
 }
