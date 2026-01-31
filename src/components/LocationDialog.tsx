@@ -1,6 +1,6 @@
-import { Dialog, DialogActions, DialogContent, DialogTitle, Divider, Grid, IconButton, Typography } from "@mui/material";
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Divider, Grid, IconButton, Typography } from "@mui/material";
 import type { DialogProps, OpenDialogOptions } from "../types/dialog";
-import CloseIcon from '@mui/icons-material/Close';
+import CloseIcon from "@mui/icons-material/Close";
 import { DraggableDialogPaperComponent } from "./DraggableDialogPaperComponent";
 import { useAtomValue } from "jotai";
 import { locationsAtom, shelvesAtom, inventoriesAtom, transportTasksAtom } from "../store";
@@ -25,6 +25,7 @@ export function LocationDialog(props: Props) {
     const location = locations.find(x => x.code == payload.code);
     const shelf = shelves.find(x => x.locationCode === payload.code);
     const shelfInventories = shelf ? inventories.filter(x => x.shelfCode === shelf.code) : [];
+    const locationTasks = tasks.filter(x => x.startLocationCode === payload.code || x.endLocationCode === payload.code);
 
     const shelfContent = shelf
         ? (
@@ -107,6 +108,34 @@ export function LocationDialog(props: Props) {
         )
         : null;
 
+    const buttons = [];
+    if (!shelf) {
+        if (locationTasks.length === 0) {
+            buttons.push(<Button key="b0" size="small" variant="contained" color="inherit">调度货架到该库位</Button>);
+        } else {
+            buttons.push(<Button key="b1" size="small" variant="contained" color="inherit">查看任务</Button>);
+        }
+    } else {
+        if (locationTasks.length === 0) {
+            buttons.push(<Button key="b2" size="small" variant="contained" color="inherit">调度货架</Button>);
+        } else {
+            if (locationTasks.length === 1) {
+                buttons.push(<Button key="b3" size="small" variant="contained" color="inherit">查看任务</Button>);
+            } else {
+                buttons.push(<Button key="b4" size="small" variant="contained" color="inherit">查看离开任务</Button>);
+                buttons.push(<Button key="b5" size="small" variant="contained" color="inherit">查看到达任务</Button>);
+            }
+        }
+
+        if (shelfInventories.length === 0) {
+            buttons.push(<Button key="b6" size="small" variant="contained" color="inherit">绑定库存</Button>);
+        } else if (shelfInventories.length === 1) {
+            buttons.push(<Button key="b7" size="small" variant="contained" color="inherit">编辑库存</Button>);
+            buttons.push(<Button key="b8" size="small" variant="contained" color="warning">删除库存</Button>);
+        } else {
+            buttons.push(<Button key="b9" size="small" variant="contained" color="inherit">查看多箱库存</Button>);
+        }
+    }
 
     return (
         <Dialog maxWidth="xs" fullWidth open={open} PaperComponent={DraggableDialogPaperComponent} hideBackdrop disableEscapeKeyDown>
@@ -118,7 +147,7 @@ export function LocationDialog(props: Props) {
                 {locationContent}
             </DialogContent>
             <DialogActions>
-
+                {buttons}
             </DialogActions>
         </Dialog>
     );
