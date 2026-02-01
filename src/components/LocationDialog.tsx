@@ -8,6 +8,8 @@ import { getShelfModels } from "../types/location";
 import { getYesOrNo } from "../types/enums";
 import type { InventoryMapModel } from "../types/inventory";
 import { Fragment } from "react/jsx-runtime";
+import { useDialog } from "../hooks/useDialog";
+import { TransportTaskCreationDialog } from "./TransportTaskCreationDialog";
 
 interface Payload extends OpenDialogOptions<void> {
     code: string;
@@ -17,10 +19,19 @@ type Props = DialogProps<Payload, void>;
 
 export function LocationDialog(props: Props) {
     const { open, payload, onClose } = props;
+    const dialog = useDialog();
     const locations = useAtomValue(locationsAtom);
     const shelves = useAtomValue(shelvesAtom);
     const inventories = useAtomValue(inventoriesAtom);
     const tasks = useAtomValue(transportTasksAtom);
+
+    const transferShelf = async (shelfCode: string) => {
+        await dialog.open(TransportTaskCreationDialog, { shelfCode: shelfCode });
+    };
+
+    const transferShelfToHere = async () => {
+        await dialog.open(TransportTaskCreationDialog, { toLocationCode: payload.code });
+    };
 
     const location = locations.find(x => x.code == payload.code);
     const shelf = shelves.find(x => x.locationCode === payload.code);
@@ -70,7 +81,7 @@ export function LocationDialog(props: Props) {
 
     const locationContent = location
         ? (
-            <Grid container spacing={1} alignItems="center">
+            <Grid container spacing={0.5} alignItems="center">
                 <Grid size={4}>
                     <Typography variant="body1">仓储位置</Typography>
                 </Grid>
@@ -111,13 +122,13 @@ export function LocationDialog(props: Props) {
     const buttons = [];
     if (!shelf) {
         if (locationTasks.length === 0) {
-            buttons.push(<Button key="b0" size="small" variant="contained" color="inherit">调度货架到该库位</Button>);
+            buttons.push(<Button key="b0" size="small" variant="contained" color="inherit" onClick={transferShelfToHere}>调度货架到该库位</Button>);
         } else {
             buttons.push(<Button key="b1" size="small" variant="contained" color="inherit">查看任务</Button>);
         }
     } else {
         if (locationTasks.length === 0) {
-            buttons.push(<Button key="b2" size="small" variant="contained" color="inherit">调度货架</Button>);
+            buttons.push(<Button key="b2" size="small" variant="contained" color="inherit" onClick={() => transferShelf(shelf.code)}>调度货架</Button>);
         } else {
             if (locationTasks.length === 1) {
                 buttons.push(<Button key="b3" size="small" variant="contained" color="inherit">查看任务</Button>);
@@ -167,7 +178,7 @@ export function LocationDialog(props: Props) {
 
 function LocationInventoryPanel({ inventory }: { inventory: InventoryMapModel }) {
     return (
-        <Grid container spacing={1} alignItems="center">
+        <Grid container spacing={0.5} alignItems="center">
             <Grid size={4}>
                 <Typography variant="body1">箱标签</Typography>
             </Grid>
@@ -235,7 +246,7 @@ function LocationInventoriesPanel({ inventories }: { inventories: InventoryMapMo
     }
 
     return (
-        <Grid container spacing={1} alignItems="center">
+        <Grid container spacing={0.5} alignItems="center">
             {elements}
         </Grid>
     );
