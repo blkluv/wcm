@@ -28,7 +28,7 @@ export function TransportTaskDetailDialog(props: Props) {
     }, [payload.code]);
 
     return (
-        <Dialog maxWidth="xs" fullWidth open={open} PaperComponent={DraggableDialogPaperComponent} hideBackdrop disableEscapeKeyDown
+        <Dialog maxWidth="xs" fullWidth open={open} PaperComponent={DraggableDialogPaperComponent} hideBackdrop disableEscapeKeyDown disableEnforceFocus
             slotProps={{
                 root: {
                     sx: {

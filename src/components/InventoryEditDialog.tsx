@@ -15,7 +15,7 @@ export function InventoryEditDialog(props: Props) {
     const { open, payload, onClose } = props;
 
     return (
-        <Dialog maxWidth="xs" fullWidth open={open} PaperComponent={DraggableDialogPaperComponent} hideBackdrop disableEscapeKeyDown
+        <Dialog maxWidth="xs" fullWidth open={open} PaperComponent={DraggableDialogPaperComponent} hideBackdrop disableEscapeKeyDown disableEnforceFocus
             slotProps={{
                 root: {
                     sx: {
