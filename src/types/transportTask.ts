@@ -10,7 +10,7 @@ export interface TransportTaskMapModel {
     businessTypeCode: string;
     businessTypeName: string | null;
     status: number;
-    createdAt: string;
+    createdAt: Date;
 }
 
 export interface TransportTaskStatisticalData {
@@ -25,9 +25,9 @@ export interface TransportTaskDetailModel extends TransportTaskMapModel {
     shelfAngle: number | null;
     priority: number | null;
     createdBy: string | null;
-    leavedAt: string | null;
-    arrivedAt: string | null;
-    scheduledAt: string | null;
+    leavedAt: Date | null;
+    arrivedAt: Date | null;
+    scheduledAt: Date | null;
     message: string | null;
 }
 
