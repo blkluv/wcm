@@ -8,6 +8,11 @@ import { getShelfModels } from "../types/location";
 import { getYesOrNo } from "../types/enums";
 import type { InventoryMapModel } from "../types/inventory";
 import { Fragment } from "react/jsx-runtime";
+import { useDialog } from "../hooks/useDialog";
+import { TransportTaskCreationDialog } from "./TransportTaskCreationDialog";
+import { TransportTaskDetailDialog } from "./TransportTaskDetailDialog";
+import { InventoryDialog } from "./InventoryDialog";
+import { InventoryEditDialog } from "./InventoryEditDialog";
 
 interface Payload extends OpenDialogOptions<void> {
     code: string;
@@ -17,6 +22,7 @@ type Props = DialogProps<Payload, void>;
 
 export function LocationDialog(props: Props) {
     const { open, payload, onClose } = props;
+    const dialog = useDialog();
     const locations = useAtomValue(locationsAtom);
     const shelves = useAtomValue(shelvesAtom);
     const inventories = useAtomValue(inventoriesAtom);
@@ -26,6 +32,59 @@ export function LocationDialog(props: Props) {
     const shelf = shelves.find(x => x.locationCode === payload.code);
     const shelfInventories = shelf ? inventories.filter(x => x.shelfCode === shelf.code) : [];
     const locationTasks = tasks.filter(x => x.startLocationCode === payload.code || x.endLocationCode === payload.code);
+
+    const transferShelf = async (shelfCode: string) => {
+        await dialog.open(TransportTaskCreationDialog, { shelfCode: shelfCode });
+    };
+
+    const transferShelfToHere = async () => {
+        await dialog.open(TransportTaskCreationDialog, { toLocationCode: payload.code });
+    };
+
+    const viewTaskDetail = async (code: string) => {
+        await dialog.open(TransportTaskDetailDialog, { code: code });
+    };
+
+    const viewLeavingTaskDetail = async () => {
+        if (locationTasks.length <= 1) {
+            return;
+        }
+
+        const task = locationTasks.find(x => x.startLocationCode === payload.code);
+        if (task) {
+            await dialog.open(TransportTaskDetailDialog, { code: task.code });
+        }
+    };
+
+    const viewArrivingTaskDetail = async () => {
+        if (locationTasks.length <= 1) {
+            return;
+        }
+
+        const task = locationTasks.find(x => x.endLocationCode === payload.code);
+        if (task) {
+            await dialog.open(TransportTaskDetailDialog, { code: task.code });
+        }
+    };
+
+    const bindInventory = async (shelfCode: string) => {
+        await dialog.open(InventoryEditDialog, { shelfCode: shelfCode });
+    };
+
+    const editInventory = async (shelfCode: string, inventory: InventoryMapModel) => {
+        await dialog.open(InventoryEditDialog, { shelfCode: shelfCode, inventory: inventory });
+    };
+
+    const deleteInventory = async (inventory: InventoryMapModel) => {
+        const b = await dialog.confirm(`确定删除库存 ${inventory.code}？`, { severity: 'warning' });
+        if (b) {
+            // TODO
+        }
+    };
+
+    const viewInventories = async (shelfCode: string) => {
+        await dialog.open(InventoryDialog, { shelfCode: shelfCode });
+    };
 
     const shelfContent = shelf
         ? (
@@ -70,7 +129,7 @@ export function LocationDialog(props: Props) {
 
     const locationContent = location
         ? (
-            <Grid container spacing={1} alignItems="center">
+            <Grid container spacing={0.5} alignItems="center">
                 <Grid size={4}>
                     <Typography variant="body1">仓储位置</Typography>
                 </Grid>
@@ -111,34 +170,34 @@ export function LocationDialog(props: Props) {
     const buttons = [];
     if (!shelf) {
         if (locationTasks.length === 0) {
-            buttons.push(<Button key="b0" size="small" variant="contained" color="inherit">调度货架到该库位</Button>);
+            buttons.push(<Button key="b0" size="small" variant="contained" color="inherit" onClick={transferShelfToHere}>调度货架到该库位</Button>);
         } else {
-            buttons.push(<Button key="b1" size="small" variant="contained" color="inherit">查看任务</Button>);
+            buttons.push(<Button key="b1" size="small" variant="contained" color="inherit" onClick={() => viewTaskDetail(locationTasks[0].code)}>查看任务</Button>);
         }
     } else {
         if (locationTasks.length === 0) {
-            buttons.push(<Button key="b2" size="small" variant="contained" color="inherit">调度货架</Button>);
+            buttons.push(<Button key="b2" size="small" variant="contained" color="inherit" onClick={() => transferShelf(shelf.code)}>调度货架</Button>);
         } else {
             if (locationTasks.length === 1) {
-                buttons.push(<Button key="b3" size="small" variant="contained" color="inherit">查看任务</Button>);
+                buttons.push(<Button key="b3" size="small" variant="contained" color="inherit" onClick={() => viewTaskDetail(locationTasks[0].code)}>查看任务</Button>);
             } else {
-                buttons.push(<Button key="b4" size="small" variant="contained" color="inherit">查看离开任务</Button>);
-                buttons.push(<Button key="b5" size="small" variant="contained" color="inherit">查看到达任务</Button>);
+                buttons.push(<Button key="b4" size="small" variant="contained" color="inherit" onClick={viewLeavingTaskDetail}>查看离开任务</Button>);
+                buttons.push(<Button key="b5" size="small" variant="contained" color="inherit" onClick={viewArrivingTaskDetail}>查看到达任务</Button>);
             }
         }
 
         if (shelfInventories.length === 0) {
-            buttons.push(<Button key="b6" size="small" variant="contained" color="inherit">绑定库存</Button>);
+            buttons.push(<Button key="b6" size="small" variant="contained" color="inherit" onClick={() => bindInventory(shelf.code)}>绑定库存</Button>);
         } else if (shelfInventories.length === 1) {
-            buttons.push(<Button key="b7" size="small" variant="contained" color="inherit">编辑库存</Button>);
-            buttons.push(<Button key="b8" size="small" variant="contained" color="warning">删除库存</Button>);
+            buttons.push(<Button key="b7" size="small" variant="contained" color="inherit" onClick={() => editInventory(shelf.code, shelfInventories[0])}>编辑库存</Button>);
+            buttons.push(<Button key="b8" size="small" variant="contained" color="warning" onClick={() => deleteInventory(shelfInventories[0])}>删除库存</Button>);
         } else {
-            buttons.push(<Button key="b9" size="small" variant="contained" color="inherit">查看多箱库存</Button>);
+            buttons.push(<Button key="b9" size="small" variant="contained" color="inherit" onClick={() => viewInventories(shelf.code)}>查看多箱库存</Button>);
         }
     }
 
     return (
-        <Dialog maxWidth="xs" fullWidth open={open} PaperComponent={DraggableDialogPaperComponent} hideBackdrop disableEscapeKeyDown
+        <Dialog maxWidth="xs" fullWidth open={open} PaperComponent={DraggableDialogPaperComponent} hideBackdrop disableEscapeKeyDown disableEnforceFocus
             slotProps={{
                 root: {
                     sx: {
@@ -167,7 +226,7 @@ export function LocationDialog(props: Props) {
 
 function LocationInventoryPanel({ inventory }: { inventory: InventoryMapModel }) {
     return (
-        <Grid container spacing={1} alignItems="center">
+        <Grid container spacing={0.5} alignItems="center">
             <Grid size={4}>
                 <Typography variant="body1">箱标签</Typography>
             </Grid>
@@ -235,7 +294,7 @@ function LocationInventoriesPanel({ inventories }: { inventories: InventoryMapMo
     }
 
     return (
-        <Grid container spacing={1} alignItems="center">
+        <Grid container spacing={0.5} alignItems="center">
             {elements}
         </Grid>
     );
