@@ -10,6 +10,7 @@ import type { InventoryMapModel } from "../types/inventory";
 import { Fragment } from "react/jsx-runtime";
 import { useDialog } from "../hooks/useDialog";
 import { TransportTaskCreationDialog } from "./TransportTaskCreationDialog";
+import { TransportTaskDetailDialog } from "./TransportTaskDetailDialog";
 
 interface Payload extends OpenDialogOptions<void> {
     code: string;
@@ -31,6 +32,10 @@ export function LocationDialog(props: Props) {
 
     const transferShelfToHere = async () => {
         await dialog.open(TransportTaskCreationDialog, { toLocationCode: payload.code });
+    };
+
+    const viewTaskDetail = async (code: string) => {
+        await dialog.open(TransportTaskDetailDialog, { code: code });
     };
 
     const location = locations.find(x => x.code == payload.code);
@@ -124,14 +129,14 @@ export function LocationDialog(props: Props) {
         if (locationTasks.length === 0) {
             buttons.push(<Button key="b0" size="small" variant="contained" color="inherit" onClick={transferShelfToHere}>调度货架到该库位</Button>);
         } else {
-            buttons.push(<Button key="b1" size="small" variant="contained" color="inherit">查看任务</Button>);
+            buttons.push(<Button key="b1" size="small" variant="contained" color="inherit" onClick={() => viewTaskDetail(locationTasks[0].code)}>查看任务</Button>);
         }
     } else {
         if (locationTasks.length === 0) {
             buttons.push(<Button key="b2" size="small" variant="contained" color="inherit" onClick={() => transferShelf(shelf.code)}>调度货架</Button>);
         } else {
             if (locationTasks.length === 1) {
-                buttons.push(<Button key="b3" size="small" variant="contained" color="inherit">查看任务</Button>);
+                buttons.push(<Button key="b3" size="small" variant="contained" color="inherit" onClick={() => viewTaskDetail(locationTasks[0].code)}>查看任务</Button>);
             } else {
                 buttons.push(<Button key="b4" size="small" variant="contained" color="inherit">查看离开任务</Button>);
                 buttons.push(<Button key="b5" size="small" variant="contained" color="inherit">查看到达任务</Button>);
