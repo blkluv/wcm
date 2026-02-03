@@ -1,6 +1,8 @@
 import type { Rectangle } from "../types/rectangle";
 import { getBoxToBoxArrow, type ArrowOptions } from "perfect-arrows";
 
+// 参考自：https://github.com/Little-Languages/quiver
+
 type Arrow = [
     sx: number,
     sy: number,
