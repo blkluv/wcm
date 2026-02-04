@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { LocationMapElement } from "../../components/LocationMapElement";
 import Draggable, { type DraggableData } from "react-draggable";
 import { useAtomValue } from "jotai";
-import { inventoriesAtom, locationsAtom, scaleAtom, shelvesAtom, transportTasksAtom } from "../../store";
+import { inventoriesAtom, locationsAtom, scaleAtom, selectedLocationsAtom, shelvesAtom, transportTasksAtom } from "../../store";
 import { getLocationElementId } from "../../types/location";
 import { type Rectangle } from "../../types/rectangle";
 import { intersect } from "../../types/map";
@@ -29,6 +29,7 @@ export function ViewPort(props: Props) {
     const shelves = useAtomValue(shelvesAtom);
     const inventories = useAtomValue(inventoriesAtom);
     const tasks = useAtomValue(transportTasksAtom);
+    const selectedLocations = useAtomValue(selectedLocationsAtom);
 
     const canvasW = Math.round(props.mapW * scale) + borderWidth * 2;
     const canvasH = Math.round(props.mapH * scale) + borderWidth * 2;
@@ -96,7 +97,9 @@ export function ViewPort(props: Props) {
             shelfInventories = inventories.filter(x => x.shelfCode == shelf.code);
         }
 
-        locationElements.push(<LocationMapElement key={getLocationElementId(location)} location={location} shelf={shelf} inventories={shelfInventories} arriveTasks={arriveTasks} leaveTask={leaveTask} onlyShelf={scale <= 0.42} />);
+        const selected = selectedLocations.some(x => x === location.code);
+
+        locationElements.push(<LocationMapElement key={getLocationElementId(location)} location={location} shelf={shelf} inventories={shelfInventories} arriveTasks={arriveTasks} leaveTask={leaveTask} onlyShelf={scale <= 0.42} selected={selected} />);
     }
 
     return (

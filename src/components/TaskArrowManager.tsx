@@ -34,11 +34,9 @@ export function TaskArrowManager(props: Props) {
         }
 
         if (source && target) {
-            if (target) {
-                arrows.push(<AnimatedArrow key={task.code} source={source} target={target} />)
-            } else {
-                arrows.push(<AnimatedArrow key={task.code} source={source} target={source} />)
-            }
+            arrows.push(<AnimatedArrow key={task.code} source={source} target={target} />);
+        } else if (source) {
+            arrows.push(<AnimatedArrow key={task.code} source={source} target={source} />)
         }
     }
 

@@ -9,3 +9,29 @@ export function getTargetLocation({ endAreaCode, endLocationCode }: { endAreaCod
 export function getLocations({ startLocationCode, endLocationCode }: { startLocationCode: string | null; endLocationCode: string | null }) {
     return [startLocationCode, endLocationCode].filter(x => x != null).join('/');
 }
+
+export function filterTake<T>(array: T[], predicate: (item: T) => boolean, qty: number) {
+    const result: T[] = [];
+    for (const item of array) {
+        if (predicate(item)) {
+            result.push(item);
+            if (result.length === qty) {
+                break;
+            }
+        }
+    }
+    return result;
+}
+
+export function groupBy<T>(list: T[], selector: (item: T) => string) {
+    return list.reduce((x, y) => {
+        const arr = x.get(selector(y));
+        if (arr) {
+            arr.push(y);
+        } else {
+            x.set(selector(y), [y]);
+        }
+
+        return x;
+    }, new Map<string, T[]>());
+}
