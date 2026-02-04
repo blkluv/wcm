@@ -42,7 +42,3 @@ export const exceptionalShelfQtyAtom = atom<number>(get => {
     const tasks = get(transportTasksAtom);
     return shelves.filter(x => x.locationCode === null && !tasks.some(y => y.shelfCode === x.code)).length;
 });
-
-export const opendDialogAtom = atom<string[]>([]);
-
-export const searchKeyWordAtom = atom<string>('');

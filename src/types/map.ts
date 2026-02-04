@@ -26,3 +26,10 @@ export function getLocationStyle(element: Rectangle, b: boolean) {
 export function intersect(element: Rectangle, offsetX: number, offsetY: number, scale: number, bounds: Rectangle) {
     return (element.x + element.w) * scale + offsetX >= bounds.x && (element.y + element.h) * scale + offsetY >= bounds.y && element.x * scale + offsetX <= bounds.x + bounds.w && element.y * scale + offsetY <= bounds.y + bounds.h;
 }
+
+export interface SearchResult {
+    code: string;
+    type: '库位' | '货架' | '库存';
+    supplierCode?: string;
+    materialCode?: string;
+}

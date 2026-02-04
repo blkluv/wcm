@@ -199,9 +199,11 @@ export function LocationDialog(props: Props) {
         } else {
             buttons.push(<Button key="b11" size="small" variant="contained" color="inherit" onClick={() => viewInventories(shelf.code)}>查看多箱库存</Button>);
         }
+
+        buttons.push(<Button key="b12" size="small" variant="contained" color="inherit">编辑货架</Button>);
     }
 
-    buttons.push(<Button key="b12" size="small" variant="contained" color="inherit">编辑库位</Button>);
+    buttons.push(<Button key="b13" size="small" variant="contained" color="inherit">编辑库位</Button>);
 
     return (
         <Dialog maxWidth="xs" fullWidth open={open} PaperComponent={DraggableDialogPaperComponent} hideBackdrop disableEscapeKeyDown disableEnforceFocus
