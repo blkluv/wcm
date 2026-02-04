@@ -42,3 +42,5 @@ export const exceptionalShelfQtyAtom = atom<number>(get => {
     const tasks = get(transportTasksAtom);
     return shelves.filter(x => x.locationCode === null && !tasks.some(y => y.shelfCode === x.code)).length;
 });
+
+export const selectedLocationsAtom = atom<string[]>([]);

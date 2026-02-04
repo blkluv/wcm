@@ -14,10 +14,11 @@ interface Props {
     arriveTasks: TransportTaskMapModel[];
     leaveTask?: TransportTaskMapModel;
     onlyShelf: boolean;
+    selected: boolean;
 }
 
 export function LocationMapElement(props: Props) {
-    const { location, shelf, inventories, arriveTasks, leaveTask, onlyShelf } = props;
+    const { location, shelf, inventories, arriveTasks, leaveTask, onlyShelf, selected } = props;
     let b = false;
     const elements = [];
     if (!onlyShelf) {
@@ -52,7 +53,7 @@ export function LocationMapElement(props: Props) {
     }
 
     return (
-        <Paper elevation={0} variant="outlined" className="map-location-box" style={getLocationStyle(location, b)} data-location-code={location.code}>
+        <Paper elevation={0} variant="outlined" className="map-location-box" style={getLocationStyle(location, b, selected)} data-location-code={location.code}>
             <Badge badgeContent={leaveTask ? 1 : 0} color="secondary" variant="dot" style={{ pointerEvents: 'none' }}>
                 <div style={{ width: `${location.w}px`, height: `${location.h}px`, position: 'relative', alignContent: 'center' }}>
                     {closeIcon}

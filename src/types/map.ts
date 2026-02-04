@@ -8,12 +8,16 @@ export interface MapElementLayerCtrl {
     transportTask: boolean;
 }
 
-export function getLocationStyle(element: Rectangle, b: boolean) {
+export function getLocationStyle(element: Rectangle, b: boolean, selected: boolean) {
     const props = {
         translate: `${element.x}px ${element.y}px`,
         width: `${element.w}px`,
         height: `${element.h}px`
     } as React.CSSProperties;
+
+    if (selected) {
+        props['backgroundColor'] = 'yellow';
+    }
 
     if (b) {
         props['borderStyle'] = 'dashed';

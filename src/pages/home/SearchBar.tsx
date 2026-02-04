@@ -5,8 +5,8 @@ import type { LocationMapElementModel } from "../../types/location";
 import type { SearchResult } from "../../types/map";
 import type { ShelfMapElementModel } from "../../types/shelf";
 import { filterTake, groupBy } from "../../types/utils";
-import { inventoriesAtom, locationsAtom, shelvesAtom } from "../../store";
-import { useAtomValue } from "jotai";
+import { inventoriesAtom, locationsAtom, selectedLocationsAtom, shelvesAtom } from "../../store";
+import { useAtomValue, useSetAtom } from "jotai";
 import { useEffect, useState } from "react";
 
 interface Props {
@@ -34,7 +34,7 @@ function search(keyWord: string, locations: LocationMapElementModel[], shelves: 
             break;
         }
 
-        filterTake(shelves, x => x.locationCode != null && x.code.toLowerCase().includes(keyWord), maxItem - result.length).forEach(x => { result.push({ code: x.code, type: '货架', locationCodes: [x.locationCode!] }) });
+        filterTake(shelves, x => x.locationCode != null && x.code.toLowerCase().includes(keyWord), maxItem - result.length).forEach(x => result.push({ code: x.code, type: '货架', locationCodes: [x.locationCode!] }));
         if (result.length >= maxItem) {
             break;
         }
@@ -81,6 +81,7 @@ export function SearchBar(props: Props) {
     const locations = useAtomValue(locationsAtom);
     const shelves = useAtomValue(shelvesAtom);
     const inventories = useAtomValue(inventoriesAtom);
+    const setSelectedLocations = useSetAtom(selectedLocationsAtom);
     const [open, setOpen] = useState(false);
     const [inputValue, setInputValue] = useState('');
     const [options, setOptions] = useState<SearchResult[]>([]);
@@ -107,7 +108,7 @@ export function SearchBar(props: Props) {
                         inputValue={inputValue}
                         onInputChange={(_, newInputValue) => setInputValue(newInputValue)}
                         noOptionsText={inputValue.length < 2 ? "输入搜索" : "无匹配项"}
-                        onChange={(_, option) => { console.log(option) }}
+                        onChange={(_, option) => setSelectedLocations(option ? option.locationCodes : [])}
                         disablePortal
                         fullWidth={true}
                         options={options}
