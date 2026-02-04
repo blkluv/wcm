@@ -22,3 +22,16 @@ export function filterTake<T>(array: T[], predicate: (item: T) => boolean, qty: 
     }
     return result;
 }
+
+export function groupBy<T>(list: T[], selector: (item: T) => string) {
+    return list.reduce((x, y) => {
+        const arr = x.get(selector(y));
+        if (arr) {
+            arr.push(y);
+        } else {
+            x.set(selector(y), [y]);
+        }
+
+        return x;
+    }, new Map<string, T[]>());
+}
