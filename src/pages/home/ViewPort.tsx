@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import { LocationMapElement } from "../../components/LocationMapElement";
 import Draggable, { type DraggableData } from "react-draggable";
-import { useAtomValue } from "jotai";
-import { inventoriesAtom, locationsAtom, scaleAtom, selectedLocationsAtom, shelvesAtom, transportTasksAtom } from "../../store";
+import { useAtomValue, useSetAtom } from "jotai";
+import { inventoriesAtom, locationsAtom, scaleAtom, selectedElementAtom, selectedLocationsAtom, shelvesAtom, transportTasksAtom } from "../../store";
 import { getLocationElementId } from "../../types/location";
 import { type Rectangle } from "../../types/rectangle";
 import { intersect } from "../../types/map";
@@ -30,6 +30,7 @@ export function ViewPort(props: Props) {
     const inventories = useAtomValue(inventoriesAtom);
     const tasks = useAtomValue(transportTasksAtom);
     const selectedLocations = useAtomValue(selectedLocationsAtom);
+    const setSelectedElement = useSetAtom(selectedElementAtom);
 
     const canvasW = Math.round(props.mapW * scale) + borderWidth * 2;
     const canvasH = Math.round(props.mapH * scale) + borderWidth * 2;
@@ -73,6 +74,13 @@ export function ViewPort(props: Props) {
                     await dialog.open(LocationDialog, { code: locationCode });
                 } else {
                     setLocationCode(locationCode);
+
+                    const shelf = shelves.find(x => x.locationCode === locationCode);
+                    if (shelf) {
+                        setSelectedElement({ code: shelf.code, type: 'shelf' });
+                    } else {
+                        setSelectedElement({ code: locationCode, type: 'location' });
+                    }
                 }
             }
         }

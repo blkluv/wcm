@@ -58,7 +58,7 @@ export function TransportTaskDetailDialog(props: Props) {
                             <Typography variant="body1" align="left"><b>源位置</b> {getSourceLocation(task)}</Typography>
                             <Typography variant="body1" align="left"><b>目的位置</b> {getTargetLocation(task)}</Typography>
                             <Typography variant="body1" align="left"><b>外部任务编号</b> {task.externalTaskCode}</Typography>
-                            <Typography variant="body1" align="left"><b>创建用户</b> {task.createdAt}</Typography>
+                            <Typography variant="body1" align="left"><b>创建用户</b> {task.createdBy}</Typography>
                             <Typography variant="body1" align="left"><b>创建时间</b> {task.createdAt}</Typography>
                             <Typography variant="body1" align="left"><b>离开时间</b> {task.leavedAt}</Typography>
                             <Typography variant="body1" align="left"><b>到达时间</b> {task.arrivedAt}</Typography>
