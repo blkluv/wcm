@@ -1,5 +1,4 @@
-import { Dialog, DialogTitle, IconButton, DialogContent } from "@mui/material";
-import CloseIcon from "@mui/icons-material/Close";
+import { Dialog, DialogTitle, DialogContent } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import { DataGrid, GridActionsCell, GridActionsCellItem, type GridColDef } from '@mui/x-data-grid';
 import type { DialogProps, OpenDialogOptions } from "../types/dialog";
@@ -9,6 +8,8 @@ import { inventoriesAtom, shelvesAtom, transportTasksAtom } from "../store";
 import type { NoLocationShelfMapElementModel } from "../types/shelf";
 import { getYesOrNo, transportTaskStatuses } from "../types/enums";
 import { useMemo } from "react";
+import { dialogSlotProps } from "./props";
+import { DialogCloseButton } from "./DialogCloseButton";
 
 type Props = DialogProps<OpenDialogOptions<void>, void>;
 
@@ -48,23 +49,9 @@ export function NoLocationShelvesDialog(props: Props) {
     }
 
     return (
-        <Dialog maxWidth="sm" fullWidth open={open} PaperComponent={DraggableDialogPaperComponent} hideBackdrop disableEscapeKeyDown disableEnforceFocus
-            slotProps={{
-                root: {
-                    sx: {
-                        pointerEvents: 'none'
-                    }
-                },
-                paper: {
-                    sx: {
-                        pointerEvents: 'auto'
-                    }
-                }
-            }}>
+        <Dialog maxWidth="sm" fullWidth open={open} PaperComponent={DraggableDialogPaperComponent} hideBackdrop disableEscapeKeyDown disableEnforceFocus slotProps={dialogSlotProps}>
             <DialogTitle style={{ cursor: 'move' }}>异常货架</DialogTitle>
-            <IconButton onClick={() => onClose()} sx={(theme) => ({ position: 'absolute', right: 8, top: 8, color: theme.palette.grey[500] })}>
-                <CloseIcon />
-            </IconButton>
+            <DialogCloseButton close={onClose} />
             <DialogContent>
                 <DataGrid
                     rows={list}

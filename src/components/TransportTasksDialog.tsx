@@ -1,9 +1,8 @@
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, IconButton, List, ListItemButton, Typography } from "@mui/material";
-import CloseIcon from "@mui/icons-material/Close";
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, List, ListItemButton, Typography } from "@mui/material";
 import type { DialogProps, OpenDialogOptions } from "../types/dialog";
 import { DraggableDialogPaperComponent } from "./DraggableDialogPaperComponent";
 import { getLocations } from "../types/utils";
-import { transportTasksAtom } from "../store";
+import { clickedLocationAtom, transportTasksAtom } from "../store";
 import { useAtom } from "jotai";
 import { transportTaskStatuses } from "../types/enums";
 import { useState } from "react";
@@ -11,6 +10,8 @@ import { abortTask, type TransportTaskMapModel } from "../types/transportTask";
 import { useDialog } from "../hooks/useDialog";
 import { TransportTaskDetailDialog } from "./TransportTaskDetailDialog";
 import { toYYYYMMDDHHmmss } from "../utils/datetime";
+import { dialogSlotProps } from "./props";
+import { DialogCloseButton } from "./DialogCloseButton";
 
 interface Payload extends OpenDialogOptions<void> {
     title: string;
@@ -24,6 +25,7 @@ export function TransportTasksDialog(props: Props) {
     const dialog = useDialog();
     const [task, setTask] = useState<TransportTaskMapModel | null>(null);
     const [allTasks, setAllTasks] = useAtom(transportTasksAtom);
+    const [clickedLocation, setClickedLocation] = useAtom(clickedLocationAtom);
     const tasks = payload.status === transportTaskStatuses.executing
         ? allTasks.filter(x => x.status === transportTaskStatuses.executing || x.status === transportTaskStatuses.renewable)
         : allTasks.filter(x => x.status === payload.status);
@@ -45,6 +47,10 @@ export function TransportTasksDialog(props: Props) {
         if (b) {
             abortTask(task);
             setAllTasks([...allTasks]);
+
+            if (clickedLocation && (clickedLocation === task.startLocationCode || clickedLocation === task.endLocationCode)) {
+                setClickedLocation(null);
+            }
         }
     };
 
@@ -58,23 +64,9 @@ export function TransportTasksDialog(props: Props) {
     }
 
     return (
-        <Dialog maxWidth="xs" fullWidth open={open} PaperComponent={DraggableDialogPaperComponent} hideBackdrop disableEscapeKeyDown disableEnforceFocus
-            slotProps={{
-                root: {
-                    sx: {
-                        pointerEvents: 'none'
-                    }
-                },
-                paper: {
-                    sx: {
-                        pointerEvents: 'auto'
-                    }
-                }
-            }}>
+        <Dialog maxWidth="xs" fullWidth open={open} PaperComponent={DraggableDialogPaperComponent} hideBackdrop disableEscapeKeyDown disableEnforceFocus slotProps={dialogSlotProps}>
             <DialogTitle style={{ cursor: 'move' }}>{payload.title}</DialogTitle>
-            <IconButton onClick={() => onClose()} sx={(theme) => ({ position: 'absolute', right: 8, top: 8, color: theme.palette.grey[500] })}>
-                <CloseIcon />
-            </IconButton>
+            <DialogCloseButton close={onClose} />
             <DialogContent>
                 <List>
                     {

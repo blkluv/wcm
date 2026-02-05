@@ -1,8 +1,9 @@
-import { Dialog, DialogTitle, IconButton, DialogContent, DialogActions, Button } from "@mui/material";
-import CloseIcon from "@mui/icons-material/Close";
+import { Dialog, DialogTitle, DialogContent, DialogActions, Button } from "@mui/material";
 import type { DialogProps, OpenDialogOptions } from "../types/dialog";
 import type { InventoryMapModel } from "../types/inventory";
 import { DraggableDialogPaperComponent } from "./DraggableDialogPaperComponent";
+import { dialogSlotProps } from "./props";
+import { DialogCloseButton } from "./DialogCloseButton";
 
 interface Payload extends OpenDialogOptions<void> {
     inventory?: InventoryMapModel;
@@ -15,23 +16,9 @@ export function InventoryEditDialog(props: Props) {
     const { open, payload, onClose } = props;
 
     return (
-        <Dialog maxWidth="xs" fullWidth open={open} PaperComponent={DraggableDialogPaperComponent} hideBackdrop disableEscapeKeyDown disableEnforceFocus
-            slotProps={{
-                root: {
-                    sx: {
-                        pointerEvents: 'none'
-                    }
-                },
-                paper: {
-                    sx: {
-                        pointerEvents: 'auto'
-                    }
-                }
-            }}>
+        <Dialog maxWidth="xs" fullWidth open={open} PaperComponent={DraggableDialogPaperComponent} hideBackdrop disableEscapeKeyDown disableEnforceFocus slotProps={dialogSlotProps}>
             <DialogTitle style={{ cursor: 'move' }}>{payload.inventory ? '编辑库存' : '新增库存'}</DialogTitle>
-            <IconButton onClick={() => onClose()} sx={(theme) => ({ position: 'absolute', right: 8, top: 8, color: theme.palette.grey[500] })}>
-                <CloseIcon />
-            </IconButton>
+            <DialogCloseButton close={onClose} />
             <DialogContent>
 
             </DialogContent>
