@@ -1,5 +1,4 @@
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, IconButton, Typography } from "@mui/material";
-import CloseIcon from "@mui/icons-material/Close";
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Typography } from "@mui/material";
 import type { DialogProps, OpenDialogOptions } from "../types/dialog";
 import { DraggableDialogPaperComponent } from "./DraggableDialogPaperComponent";
 import { abortTask, canAbort, canContinue, canRepeat, canTriggerEnd, canTriggerStart, triggerTaskEnd, triggerTaskStart } from "../types/transportTask";
@@ -9,6 +8,7 @@ import { shelvesAtom, transportTasksAtom } from "../store";
 import { toYYYYMMDDHHmmss } from "../utils/datetime";
 import { dialogSlotProps } from "./props";
 import { useDialog } from "../hooks/useDialog";
+import { DialogCloseButton } from "./DialogCloseButton";
 
 interface Payload extends OpenDialogOptions<void> {
     code: string;
@@ -74,9 +74,7 @@ export function TransportTaskDetailDialog(props: Props) {
     return (
         <Dialog maxWidth="xs" fullWidth open={open} PaperComponent={DraggableDialogPaperComponent} hideBackdrop disableEscapeKeyDown disableEnforceFocus slotProps={dialogSlotProps}>
             <DialogTitle style={{ cursor: 'move' }}>搬运任务 {payload.code}</DialogTitle>
-            <IconButton onClick={() => onClose()} sx={(theme) => ({ position: 'absolute', right: 8, top: 8, color: theme.palette.grey[500] })}>
-                <CloseIcon />
-            </IconButton>
+            <DialogCloseButton close={onClose} />
             <DialogContent>
                 {
                     task ? (

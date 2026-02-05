@@ -1,10 +1,10 @@
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, IconButton } from "@mui/material";
-import CloseIcon from "@mui/icons-material/Close";
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle } from "@mui/material";
 import type { DialogProps, OpenDialogOptions } from "../types/dialog";
 import { DraggableDialogPaperComponent } from "./DraggableDialogPaperComponent";
 import { dialogSlotProps } from "./props";
 import { TransportTaskCreationForm } from "./TransportTaskCreationForm";
 import { useRef } from "react";
+import { DialogCloseButton } from "./DialogCloseButton";
 
 interface Payload extends OpenDialogOptions<void> {
     shelfCode?: string;
@@ -29,9 +29,7 @@ export function TransportTaskCreationDialog(props: Props) {
     return (
         <Dialog maxWidth="xs" fullWidth open={open} PaperComponent={DraggableDialogPaperComponent} hideBackdrop disableEscapeKeyDown disableEnforceFocus slotProps={dialogSlotProps}>
             <DialogTitle style={{ cursor: 'move' }}>新增调度任务</DialogTitle>
-            <IconButton onClick={() => onClose()} sx={(theme) => ({ position: 'absolute', right: 8, top: 8, color: theme.palette.grey[500] })}>
-                <CloseIcon />
-            </IconButton>
+            <DialogCloseButton close={onClose} />
             <DialogContent>
                 <TransportTaskCreationForm ref={formRef} shelfCode={payload.shelfCode} toLocationCode={payload.toLocationCode} />
             </DialogContent>
