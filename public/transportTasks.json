@@ -21,7 +21,7 @@
             "scheduledAt": "2026-02-01T15:43:50.678",
             "leavedAt": "2026-02-01T15:45:50.678",
             "arrivedAt": null,
-            "createBy": "管理员"
+            "createdBy": "管理员"
         }
     ]
 }

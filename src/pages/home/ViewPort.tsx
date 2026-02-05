@@ -10,6 +10,7 @@ import type { InventoryMapModel } from "../../types/inventory";
 import { LocationDialog } from "../../components/LocationDialog";
 import { useDialog } from "../../hooks/useDialog";
 import { TaskArrowManager } from "../../components/TaskArrowManager";
+import { transportTaskStatuses } from "../../types/enums";
 
 interface Props {
     mapW: number;
@@ -92,8 +93,8 @@ export function ViewPort(props: Props) {
             continue;
         }
 
-        const leaveTask = tasks.find(x => x.startLocationCode === location.code);
-        const arriveTasks = tasks.filter(x => x.endLocationCode === location.code);
+        const leaveTask = tasks.find(x => x.startLocationCode === location.code && x.status >= transportTaskStatuses.pending && x.status <= transportTaskStatuses.renewable);
+        const arriveTasks = tasks.filter(x => x.endLocationCode === location.code && x.status >= transportTaskStatuses.pending && x.status <= transportTaskStatuses.renewable);
 
         let shelf = shelves.find(x => x.locationCode == location.code);
         if (!shelf && arriveTasks.length > 0) {

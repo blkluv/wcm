@@ -40,7 +40,7 @@ export const transportTaskStatisticalDataAtom = atom<TransportTaskStatisticalDat
 export const exceptionalShelfQtyAtom = atom<number>(get => {
     const shelves = get(shelvesAtom);
     const tasks = get(transportTasksAtom);
-    return shelves.filter(x => x.locationCode === null && !tasks.some(y => y.shelfCode === x.code)).length;
+    return shelves.filter(x => x.locationCode === null && !tasks.some(y => y.shelfCode === x.code && y.status >= transportTaskStatuses.pending && y.status <= transportTaskStatuses.renewable)).length;
 });
 
 export const selectedLocationsAtom = atom<string[]>([]);

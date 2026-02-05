@@ -89,3 +89,8 @@ export function createNew(shelfCode: string, toLocationCode: string, shelves: Sh
         message: null
     };
 }
+
+export function abortTask(task: TransportTaskMapModel) {
+    task.status = transportTaskStatuses.aborted;
+    task.message = '被管理员中断';
+}

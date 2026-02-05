@@ -2,11 +2,13 @@ import { Button, Dialog, DialogActions, DialogContent, DialogTitle, IconButton, 
 import CloseIcon from "@mui/icons-material/Close";
 import type { DialogProps, OpenDialogOptions } from "../types/dialog";
 import { DraggableDialogPaperComponent } from "./DraggableDialogPaperComponent";
-import { canAbort, canContinue, canRepeat, canTrigger } from "../types/transportTask";
+import { abortTask, canAbort, canContinue, canRepeat, canTrigger } from "../types/transportTask";
 import { getSourceLocation, getTargetLocation } from "../types/utils";
-import { useAtomValue } from "jotai";
+import { useAtom } from "jotai";
 import { transportTasksAtom } from "../store";
 import { toYYYYMMDDHHmmss } from "../utils/datetime";
+import { dialogSlotProps } from "./props";
+import { useDialog } from "../hooks/useDialog";
 
 interface Payload extends OpenDialogOptions<void> {
     code: string;
@@ -16,23 +18,24 @@ type Props = DialogProps<Payload, void>;
 
 export function TransportTaskDetailDialog(props: Props) {
     const { open, payload, onClose } = props;
-    const tasks = useAtomValue(transportTasksAtom);
+    const dialog = useDialog();
+    const [tasks, setTasks] = useAtom(transportTasksAtom);
     const task = tasks.find(x => x.code === payload.code);
 
+    const abort = async () => {
+        if (!task) {
+            return;
+        }
+
+        const b = await dialog.confirm(`确定中断任务 ${task.code}？`, { severity: 'warning' });
+        if (b) {
+            abortTask(task);
+            setTasks([...tasks]);
+        }
+    };
+
     return (
-        <Dialog maxWidth="xs" fullWidth open={open} PaperComponent={DraggableDialogPaperComponent} hideBackdrop disableEscapeKeyDown disableEnforceFocus
-            slotProps={{
-                root: {
-                    sx: {
-                        pointerEvents: 'none'
-                    }
-                },
-                paper: {
-                    sx: {
-                        pointerEvents: 'auto'
-                    }
-                }
-            }}>
+        <Dialog maxWidth="xs" fullWidth open={open} PaperComponent={DraggableDialogPaperComponent} hideBackdrop disableEscapeKeyDown disableEnforceFocus slotProps={dialogSlotProps}>
             <DialogTitle style={{ cursor: 'move' }}>搬运任务 {payload.code}</DialogTitle>
             <IconButton onClick={() => onClose()} sx={(theme) => ({ position: 'absolute', right: 8, top: 8, color: theme.palette.grey[500] })}>
                 <CloseIcon />
@@ -65,10 +68,10 @@ export function TransportTaskDetailDialog(props: Props) {
                     task ? (
                         <>
                             <Button size="small" variant="contained" disabled={!canContinue(task)} color="inherit">继续</Button>
-                            <Button size="small" variant="contained" disabled={!canTrigger(task)} color="inherit">触发开始</Button>
-                            <Button size="small" variant="contained" disabled={!canTrigger(task)} color="primary">触发结束</Button>
-                            <Button size="small" variant="contained" disabled={!canAbort(task)} color="warning">中断</Button>
-                            <Button size="small" variant="contained" disabled={!canRepeat(task)} color="inherit">复制</Button>
+                            <Button size="small" variant="contained" disabled={!canTrigger(task)} onClick={abort} color="inherit">触发开始</Button>
+                            <Button size="small" variant="contained" disabled={!canTrigger(task)} onClick={abort} color="primary">触发结束</Button>
+                            <Button size="small" variant="contained" disabled={!canAbort(task)} onClick={abort} color="warning">中断</Button>
+                            <Button size="small" variant="contained" disabled={!canRepeat(task)} onClick={abort} color="inherit">复制</Button>
                         </>
                     ) : null
                 }
