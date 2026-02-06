@@ -1,7 +1,7 @@
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Divider, Grid, Typography } from "@mui/material";
 import type { DialogProps, OpenDialogOptions } from "../types/dialog";
 import { DraggableDialogPaperComponent } from "./DraggableDialogPaperComponent";
-import { useAtomValue, useSetAtom } from "jotai";
+import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import { locationsAtom, shelvesAtom, inventoriesAtom, transportTasksAtom, selectedElementAtom } from "../store";
 import { getShelfModels } from "../types/location";
 import { getYesOrNo, transportTaskStatuses } from "../types/enums";
@@ -15,6 +15,8 @@ import { InventoryEditDialog } from "./InventoryEditDialog";
 import { DialogCloseButton } from "./DialogCloseButton";
 import { dialogSlotProps } from "./props";
 import { TransportTasksDialog } from "./TransportTasksDialog";
+import type { ShelfMapElementModel } from "../types/shelf";
+import { ShelfEditionDialog } from "./ShelfEditionDialog";
 
 interface Payload extends OpenDialogOptions<void> {
     code: string;
@@ -27,7 +29,7 @@ export function LocationDialog(props: Props) {
     const dialog = useDialog();
     const locations = useAtomValue(locationsAtom);
     const shelves = useAtomValue(shelvesAtom);
-    const inventories = useAtomValue(inventoriesAtom);
+    const [inventories, setInventories] = useAtom(inventoriesAtom);
     const tasks = useAtomValue(transportTasksAtom);
     const setSelectedElement = useSetAtom(selectedElementAtom);
 
@@ -65,12 +67,17 @@ export function LocationDialog(props: Props) {
     const deleteInventory = async (inventory: InventoryMapModel) => {
         const b = await dialog.confirm(`确定删除库存 ${inventory.code}？`, { severity: 'warning' });
         if (b) {
-            // TODO
+            const arr = inventories.filter(x => x.code !== inventory.code);
+            setInventories(arr);
         }
     };
 
     const viewInventories = async (shelfCode: string) => {
         await dialog.open(InventoryDialog, { shelfCode: shelfCode });
+    };
+
+    const editShelf = async (shelf: ShelfMapElementModel) => {
+        await dialog.open(ShelfEditionDialog, { shelf: shelf });
     };
 
     const shelfContent = shelf
@@ -182,7 +189,7 @@ export function LocationDialog(props: Props) {
         }
 
         if (locationTasks.length === 0) {
-            buttons.push(<Button key="b8" size="small" variant="contained" color="inherit">编辑货架</Button>);
+            buttons.push(<Button key="b8" size="small" variant="contained" color="inherit" onClick={() => editShelf(shelf)}>编辑货架</Button>);
         }
     }
 
