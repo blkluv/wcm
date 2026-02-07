@@ -78,9 +78,14 @@ export function ViewPort(props: Props) {
 
                     const shelf = shelves.find(x => x.locationCode === locationCode);
                     if (shelf) {
-                        setSelectedElement({ code: shelf.code, type: 'shelf' });
+                        if (shelf.enabled) {
+                            setSelectedElement({ code: shelf.code, type: 'shelf' });
+                        }
                     } else {
-                        setSelectedElement({ code: locationCode, type: 'location' });
+                        const location = locations.find(x => x.code === locationCode);
+                        if (location && location.enabled) {
+                            setSelectedElement({ code: locationCode, type: 'location' });
+                        }
                     }
                 }
             }
