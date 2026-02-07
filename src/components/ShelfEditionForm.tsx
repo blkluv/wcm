@@ -61,7 +61,8 @@ export const ShelfEditionForm = forwardRef((props: Props, ref: React.Ref<{ submi
 
     if (selectedElement) {
         if (selectedElement.type === 'location') {
-            setValue('locationCode', selectedElement.code);
+            setValue('locationCode', selectedElement.code, { shouldValidate: true });
+
         }
 
         setSelectedElement(null);
