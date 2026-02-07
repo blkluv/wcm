@@ -31,7 +31,7 @@ export const ShelfEditionForm = forwardRef((props: Props, ref: React.Ref<{ submi
         control,
         register,
         handleSubmit,
-        formState: { errors },
+        formState: { errors, isValid },
         reset,
         setValue
     } = useForm<FormValues>({
@@ -55,7 +55,7 @@ export const ShelfEditionForm = forwardRef((props: Props, ref: React.Ref<{ submi
     useImperativeHandle(ref, () => ({
         submit: async () => {
             await handleSubmit(onSubmit)();
-            return true;
+            return isValid;
         }
     }));
 
