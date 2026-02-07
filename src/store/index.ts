@@ -6,6 +6,8 @@ import type { ShelfMapElementModel } from "../types/shelf";
 import type { InventoryMapModel } from "../types/inventory";
 import { transportTaskStatuses } from "../types/enums";
 import type { MapElementLayerCtrl } from "../types/map";
+import type { Material } from "../types/material";
+import type { Supplier } from "../types/supplier";
 
 export const globalAlertAtom = atom<string[]>([]);
 
@@ -30,6 +32,26 @@ export const inventoriesAtom = atom<InventoryMapModel[]>([]);
 export const transportTasksAtom = atom<TransportTaskMapModel[]>([]);
 
 export const shelfModelsAtom = atom<string[]>(['1212', '1313', '1317']);
+
+export const materialsAtom = atom<Material[]>([
+    { code: 'B300054260', name: '碳罐', type: 'small-part' },
+    { code: 'B300056460', name: '燃油蒸汽隔离阀', type: 'large-part' },
+    { code: 'Z900538160', name: 'DCDC高压电缆', type: 'large-part' },
+    { code: 'B300063460', name: '管路总成', type: 'large-part' },
+    { code: 'V500044260', name: '后空调中段制冷管', type: 'large-part' },
+    { code: 'V500044360', name: '后空调后端制冷管', type: 'large-part' },
+    { code: 'B100176760', name: '冷却水管-连接管总成', type: 'large-part' },
+    { code: 'Z900321960', name: '蓄电池正极电缆', type: 'small-part' },
+    { code: 'B100138960', name: '驱动电机出水管', type: 'small-part' },
+    { code: 'B100213360', name: '散热器进水管', type: 'small-part' },
+    { code: 'E200040960', name: '后螺旋弹簧', type: 'large-part' },
+    { code: 'E200002660', name: '后螺旋弹簧下支撑座橡胶垫', type: 'large-part' },
+    { code: 'E200002560', name: '后螺旋弹簧上座橡胶垫', type: 'large-part' }
+]);
+
+export const supplersAtom = atom<Supplier[]>([
+    { code: '000000', name: '默认供应商' }
+]);
 
 export const transportTaskStatisticalDataAtom = atom<TransportTaskStatisticalData>(get => {
     const tasks = get(transportTasksAtom);

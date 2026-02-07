@@ -107,20 +107,19 @@ export function SearchBar(props: Props) {
                         onClose={() => setOpen(false)}
                         inputValue={inputValue}
                         onInputChange={(_, newInputValue) => setInputValue(newInputValue)}
-                        noOptionsText={inputValue.length < 2 ? "输入搜索" : "无匹配项"}
+                        noOptionsText={inputValue.length < 2 ? null : "无匹配项"}
                         onChange={(_, option) => setSelectedLocations(option ? option.locationCodes : [])}
                         disablePortal
                         fullWidth={true}
                         options={options}
                         forcePopupIcon={false}
+                        getOptionKey={option => option.code}
                         getOptionLabel={option => option.code}
-                        renderOption={(props, option) => {
-                            return (
-                                <li {...props} key={option.code}>
-                                    {option.type}: {option.code}
-                                </li>
-                            );
-                        }}
+                        renderOption={(props, option) => (
+                            <li {...props} key={option.code}>
+                                {option.type}: {option.code}
+                            </li>
+                        )}
                         renderInput={(params) => <TextField {...params} size="small" variant="outlined" placeholder="搜索" />}
                     />
                     <IconButton size="medium">
