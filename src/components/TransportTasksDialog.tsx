@@ -5,7 +5,7 @@ import { getLocations } from "../types/utils";
 import { clickedLocationAtom, transportTasksAtom } from "../store";
 import { useAtom } from "jotai";
 import { transportTaskStatuses } from "../types/enums";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { abortTask, type TransportTaskMapModel } from "../types/transportTask";
 import { useDialog } from "../hooks/useDialog";
 import { TransportTaskDetailDialog } from "./TransportTaskDetailDialog";
@@ -50,12 +50,24 @@ export function TransportTasksDialog(props: Props) {
         if (b) {
             abortTask(task);
             setAllTasks([...allTasks]);
+            setTask(null);
 
             if (clickedLocation && (clickedLocation === task.startLocationCode || clickedLocation === task.endLocationCode)) {
                 setClickedLocation(null);
             }
         }
     };
+
+    const cleanSelected = () => {
+        if (task && (task.status < transportTaskStatuses.pending || task.status > transportTaskStatuses.renewable)) {
+            setTask(null);
+        }
+    };
+
+    useEffect(() => {
+        cleanSelected();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [tasks]);
 
     const buttons = [];
     if (payload.status === transportTaskStatuses.pending) {
