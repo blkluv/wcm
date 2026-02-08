@@ -36,7 +36,7 @@ export function LocationDialog(props: Props) {
     const location = locations.find(x => x.code == payload.code);
     const shelf = shelves.find(x => x.locationCode === payload.code);
     const shelfInventories = shelf ? inventories.filter(x => x.shelfCode === shelf.code) : [];
-    const locationTasks = tasks.filter(x => (x.startLocationCode === payload.code || x.endLocationCode === payload.code) && x.status >= transportTaskStatuses.pending && x.status <= transportTaskStatuses.renewable);
+    const locationTasks = tasks.filter(x => x.startLocationCode === payload.code || x.endLocationCode === payload.code);
 
     const transferShelf = async (shelfCode: string) => {
         setSelectedElement(null);
