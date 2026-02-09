@@ -3,7 +3,7 @@ import type { DialogProps, OpenDialogOptions } from "../types/dialog";
 import { DraggableDialogPaperComponent } from "./DraggableDialogPaperComponent";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import { locationsAtom, shelvesAtom, inventoriesAtom, transportTasksAtom, selectedElementAtom } from "../store";
-import { getShelfModels } from "../types/location";
+import { getShelfModels, type LocationMapElementModel } from "../types/location";
 import { getYesOrNo, transportTaskStatuses } from "../types/enums";
 import { groupByMaterial, type InventoryMapModel } from "../types/inventory";
 import { Fragment } from "react/jsx-runtime";
@@ -17,6 +17,7 @@ import { dialogSlotProps } from "./props";
 import { TransportTasksDialog } from "./TransportTasksDialog";
 import type { ShelfMapElementModel } from "../types/shelf";
 import { ShelfEditionDialog } from "./ShelfEditionDialog";
+import { LocationEditionDialog } from "./LocationEditionDialog";
 
 interface Payload extends OpenDialogOptions<void> {
     code: string;
@@ -78,6 +79,10 @@ export function LocationDialog(props: Props) {
 
     const editShelf = async (shelf: ShelfMapElementModel) => {
         await dialog.open(ShelfEditionDialog, { shelf: shelf });
+    };
+
+    const editLocation = async (location: LocationMapElementModel) => {
+        await dialog.open(LocationEditionDialog, { location: location });
     };
 
     const shelfContent = shelf
@@ -193,8 +198,8 @@ export function LocationDialog(props: Props) {
         }
     }
 
-    if (locationTasks.length === 0) {
-        buttons.push(<Button key="b9" size="small" variant="contained" color="inherit">编辑库位</Button>);
+    if (locationTasks.length === 0 && location) {
+        buttons.push(<Button key="b9" size="small" variant="contained" color="inherit" onClick={() => editLocation(location)}>编辑库位</Button>);
     }
 
     return (
