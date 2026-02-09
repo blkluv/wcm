@@ -1,20 +1,20 @@
 import { Autocomplete, TextField } from "@mui/material";
 import { useEffect, useState } from "react";
-import type { LocationMapElementModel } from "../types/location";
 import { textFieldSlotProps } from "./props";
 import { useAtomValue } from "jotai";
-import { locationsAtom } from "../store";
+import { shelvesAtom } from "../store";
 import { Controller, useFormContext } from "react-hook-form";
+import type { ShelfMapElementModel } from "../types/shelf";
 
-export function LocationAutocomplete(props: { label?: string; required: boolean; }) {
+export function ShelfAutocomplete(props: { label?: string; required: boolean; }) {
     const [open, setOpen] = useState(false);
-    const { control } = useFormContext<{ locationCode: string; }>();
+    const { control } = useFormContext<{ shelfCode: string; }>();
     const [inputValue, setInputValue] = useState('');
-    const [options, setOptions] = useState<LocationMapElementModel[]>([]);
-    const locations = useAtomValue(locationsAtom);
+    const [options, setOptions] = useState<ShelfMapElementModel[]>([]);
+    const shelves = useAtomValue(shelvesAtom);
 
     const doSearch = () => {
-        setOptions(locations.filter(x => x.code.toLowerCase().includes(inputValue.toLowerCase())));
+        setOptions(shelves.filter(x => x.code.toLowerCase().includes(inputValue.toLowerCase())));
     };
 
     useEffect(() => {
@@ -22,15 +22,15 @@ export function LocationAutocomplete(props: { label?: string; required: boolean;
             doSearch();
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [inputValue, open, locations]);
+    }, [inputValue, open, shelves]);
 
     return (
-        <Controller name="locationCode" control={control}
+        <Controller name="shelfCode" control={control}
             render={({ field: { onChange, value, ref }, fieldState: { error } }) => (
                 <Autocomplete open={open}
                     onOpen={() => setOpen(true)}
                     onClose={() => setOpen(false)}
-                    value={{ code: value, level: 0, externalCode: '', shelfModels: [], enabled: true, areaCode: '', x: 0, y: 0, w: 0, h: 0 }}
+                    value={{ code: value, model: '', enabled: true, locationCode: null }}
                     inputValue={inputValue}
                     onInputChange={(_, newInputValue) => setInputValue(newInputValue)}
                     noOptionsText={inputValue.length === 0 ? null : "无匹配项"}

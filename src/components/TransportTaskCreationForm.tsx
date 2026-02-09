@@ -1,16 +1,17 @@
-import { Box, Stack, TextField } from "@mui/material";
-import { useForm } from "react-hook-form";
+import { Box, Stack } from "@mui/material";
+import { useForm, FormProvider } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
-import { textFieldSlotProps } from "./props";
 import { locationsAtom, selectedElementAtom, shelvesAtom, transportTasksAtom } from "../store";
 import { useAtom, useAtomValue } from "jotai";
 import { forwardRef, useImperativeHandle } from "react";
 import { createNew } from "../types/transportTask";
+import { LocationAutocomplete } from "./LocationAutocomplete";
+import { ShelfAutocomplete } from "./ShelfAutocomplete";
 
 const schema = yup.object({
     shelfCode: yup.string().required("请选择货架或在地图上选择").max(50, "货架最多50个字符"),
-    toLocationCode: yup.string().required("请选择库位或在地图上选择").max(50, "库位最多50个字符")
+    locationCode: yup.string().required("请选择库位或在地图上选择").max(50, "库位最多50个字符")
 }).required();
 
 type FormValues = yup.InferType<typeof schema>;
@@ -27,23 +28,23 @@ export const TransportTaskCreationForm = forwardRef((props: Props, ref: React.Re
     const locations = useAtomValue(locationsAtom);
     const shelves = useAtomValue(shelvesAtom);
 
-    const {
-        register,
-        handleSubmit,
-        formState: { errors },
-        reset,
-        setValue
-    } = useForm<FormValues>({
+    const methods = useForm<FormValues>({
         resolver: yupResolver(schema),
         mode: 'onChange',
         defaultValues: {
             shelfCode: shelfCode ?? '',
-            toLocationCode: toLocationCode ?? ''
+            locationCode: toLocationCode ?? ''
         }
     });
 
+    const {
+        handleSubmit,
+        reset,
+        setValue
+    } = methods;
+
     const onSubmit = async (data: FormValues) => {
-        setTasks([...tasks, createNew(data.shelfCode, data.toLocationCode, shelves, locations)]);
+        setTasks([...tasks, createNew(data.shelfCode, data.locationCode, shelves, locations)]);
         reset();
     };
 
@@ -61,7 +62,7 @@ export const TransportTaskCreationForm = forwardRef((props: Props, ref: React.Re
             }
         } else {
             if (!toLocationCode) {
-                setValue('toLocationCode', selectedElement.code);
+                setValue('locationCode', selectedElement.code);
             }
         }
 
@@ -69,11 +70,13 @@ export const TransportTaskCreationForm = forwardRef((props: Props, ref: React.Re
     }
 
     return (
-        <Box component="form" noValidate onSubmit={handleSubmit(onSubmit)}>
-            <Stack spacing={1}>
-                <TextField label="货架" variant="outlined" size="small" slotProps={textFieldSlotProps} fullWidth required error={!!errors.shelfCode} helperText={errors.shelfCode?.message} {...register('shelfCode')} />
-                <TextField label="库位" variant="outlined" size="small" slotProps={textFieldSlotProps} fullWidth required error={!!errors.toLocationCode} helperText={errors.toLocationCode?.message} {...register('toLocationCode')} />
-            </Stack>
-        </Box>
+        <FormProvider {...methods}>
+            <Box component="form" noValidate onSubmit={handleSubmit(onSubmit)}>
+                <Stack spacing={1}>
+                    <ShelfAutocomplete label="货架" required />
+                    <LocationAutocomplete label="库位" required />
+                </Stack>
+            </Box>
+        </FormProvider>
     );
 });
