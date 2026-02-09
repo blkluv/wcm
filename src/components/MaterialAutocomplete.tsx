@@ -2,19 +2,20 @@ import { Autocomplete, TextField } from "@mui/material";
 import { useEffect, useState } from "react";
 import { textFieldSlotProps } from "./props";
 import { useAtomValue } from "jotai";
-import { areasAtom } from "../store";
+import { materialsAtom } from "../store";
 import { Controller, useFormContext } from "react-hook-form";
-import type { AreaMapElementModel } from "../types/area";
+import type { Material } from "../types/material";
+import { getDisplayName } from "../utils";
 
-export function AreaAutocomplete(props: { label?: string; required: boolean; }) {
+export function MaterialAutocomplete(props: { label?: string; required: boolean; }) {
     const [open, setOpen] = useState(false);
-    const { control } = useFormContext<{ areaCode: string; }>();
+    const { control } = useFormContext<{ materialCode: string; }>();
     const [inputValue, setInputValue] = useState('');
-    const [options, setOptions] = useState<AreaMapElementModel[]>([]);
-    const areas = useAtomValue(areasAtom);
+    const [options, setOptions] = useState<Material[]>([]);
+    const materials = useAtomValue(materialsAtom);
 
     const doSearch = () => {
-        setOptions(areas.filter(x => x.code.toLowerCase().includes(inputValue.toLowerCase())));
+        setOptions(materials.filter(x => x.code.toLowerCase().includes(inputValue.toLowerCase())));
     };
 
     useEffect(() => {
@@ -22,15 +23,15 @@ export function AreaAutocomplete(props: { label?: string; required: boolean; }) 
             doSearch();
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [inputValue, open, areas]);
+    }, [inputValue, open, materials]);
 
     return (
-        <Controller name="areaCode" control={control}
+        <Controller name="materialCode" control={control}
             render={({ field: { onChange, value, ref }, fieldState: { error } }) => (
                 <Autocomplete open={open}
                     onOpen={() => setOpen(true)}
                     onClose={() => setOpen(false)}
-                    value={{ code: value, name: null, type: '' }}
+                    value={{ code: value, name: '', type: '' }}
                     inputValue={inputValue}
                     onInputChange={(_, newInputValue) => setInputValue(newInputValue)}
                     noOptionsText={inputValue.length === 0 ? null : "无匹配项"}
@@ -39,10 +40,10 @@ export function AreaAutocomplete(props: { label?: string; required: boolean; }) 
                     options={options}
                     forcePopupIcon={false}
                     getOptionKey={option => option.code}
-                    getOptionLabel={option => option.code}
+                    getOptionLabel={option => getDisplayName(option)}
                     renderOption={(props, option) => (
                         <li {...props} key={option.code}>
-                            {option.code}: {option.name}
+                            {getDisplayName(option)}
                         </li>
                     )}
                     size="small"

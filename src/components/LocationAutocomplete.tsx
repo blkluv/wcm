@@ -41,7 +41,8 @@ export function LocationAutocomplete(props: Props) {
                     forcePopupIcon={false}
                     getOptionKey={option => option.code}
                     getOptionLabel={option => option.code}
-                    renderInput={(params) => <TextField {...params} slotProps={textFieldSlotProps} size="small" variant="outlined" label={props.label} error={!!error} helperText={error?.message} inputRef={ref} />}
+                    size="small"
+                    renderInput={(params) => <TextField {...params} slotProps={textFieldSlotProps} variant="outlined" label={props.label} error={!!error} helperText={error?.message} inputRef={ref} />}
                 />
             )}
         />

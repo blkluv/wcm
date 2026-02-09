@@ -1,5 +1,5 @@
-import { Autocomplete, Box, Stack, TextField } from "@mui/material";
-import { Controller, useForm } from "react-hook-form";
+import { Box, Stack, TextField } from "@mui/material";
+import { useForm, FormProvider } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { textFieldSlotProps } from "./props";
@@ -7,8 +7,10 @@ import { inventoriesAtom, materialsAtom, supplersAtom } from "../store";
 import { useAtom, useAtomValue } from "jotai";
 import { forwardRef, useImperativeHandle } from "react";
 import { createNew, type InventoryMapModel } from "../types/inventory";
-import { generateBatchNo, generateLabelCode, getDisplayName } from "../utils";
+import { generateBatchNo, generateLabelCode } from "../utils";
 import { NumberField } from "./NumberField";
+import { SupplierAutocomplete } from "./SupplierAutocomplete";
+import { MaterialAutocomplete } from "./MaterialAutocomplete";
 
 const schema = yup.object({
     code: yup.string().required("标签是必须的").max(50, "标签最多50个字符"),
@@ -32,14 +34,7 @@ export const InventoryEditForm = forwardRef((props: Props, ref: React.Ref<{ subm
     const materials = useAtomValue(materialsAtom);
     const suppliers = useAtomValue(supplersAtom);
 
-    const {
-        control,
-        register,
-        handleSubmit,
-        formState: { errors, defaultValues, isValid },
-        reset,
-        setValue,
-    } = useForm<FormValues>({
+    const methods = useForm<FormValues>({
         resolver: yupResolver(schema),
         mode: 'onChange',
         defaultValues: {
@@ -51,6 +46,14 @@ export const InventoryEditForm = forwardRef((props: Props, ref: React.Ref<{ subm
             qty: inventory?.qty ?? 1
         }
     });
+
+    const {
+        register,
+        handleSubmit,
+        formState: { errors, defaultValues, isValid },
+        reset,
+        setValue,
+    } = methods;
 
     const onSubmit = async (data: FormValues) => {
         const item = createNew(data.code, data.shelfCode, data.supplierCode, data.materialCode, data.batchNo, data.qty, materials, suppliers);
@@ -72,47 +75,17 @@ export const InventoryEditForm = forwardRef((props: Props, ref: React.Ref<{ subm
     }));
 
     return (
-        <Box component="form" onSubmit={handleSubmit(onSubmit)}>
-            <Stack spacing={1}>
-                <TextField label="标签" variant="outlined" size="small" disabled={inventory != undefined} slotProps={textFieldSlotProps} fullWidth required error={!!errors.code} helperText={errors.code?.message} {...register('code')} />
-                <TextField label="货架" variant="outlined" size="small" disabled={inventory == undefined} slotProps={textFieldSlotProps} fullWidth required error={!!errors.shelfCode} helperText={errors.shelfCode?.message} {...register('shelfCode')} />
-                <TextField label="批次号" variant="outlined" size="small" slotProps={textFieldSlotProps} fullWidth required error={!!errors.batchNo} helperText={errors.batchNo?.message} {...register('batchNo')} />
-                <Controller name="supplierCode" control={control}
-                    render={({ field: { onChange, value, ref }, fieldState: { error } }) => (
-                        <Autocomplete size="small" fullWidth
-                            inputValue={value}
-                            options={suppliers} getOptionKey={(option) => option.code} getOptionLabel={option => getDisplayName(option)}
-                            onChange={(_, data) => onChange(data?.code ?? '')}
-                            renderOption={(props, option) => (
-                                <li {...props} key={option.code}>
-                                    {getDisplayName(option)}
-                                </li>
-                            )}
-                            renderInput={(params) => (
-                                <TextField slotProps={textFieldSlotProps} {...params} label="供应商" required error={!!error} helperText={error?.message} inputRef={ref} />
-                            )}
-                        />
-                    )}
-                />
-                <Controller name="materialCode" control={control}
-                    render={({ field: { onChange, value, ref }, fieldState: { error } }) => (
-                        <Autocomplete size="small" fullWidth
-                            inputValue={value}
-                            options={materials} getOptionKey={(option) => option.code} getOptionLabel={option => getDisplayName(option)}
-                            onChange={(_, data) => onChange(data?.code ?? '')}
-                            renderOption={(props, option) => (
-                                <li {...props} key={option.code}>
-                                    {getDisplayName(option)}
-                                </li>
-                            )}
-                            renderInput={(params) => (
-                                <TextField slotProps={textFieldSlotProps} {...params} label="物料" required error={!!error} helperText={error?.message} inputRef={ref} />
-                            )}
-                        />
-                    )}
-                />
-                <NumberField label="数量" size="small" fullWidth required error={!!errors.qty} helperText={errors.qty?.message} min={1} max={999999} defaultValue={defaultValues?.qty} onValueChange={x => setValue('qty', x ?? 0)} />
-            </Stack>
-        </Box>
+        <FormProvider {...methods}>
+            <Box component="form" onSubmit={handleSubmit(onSubmit)}>
+                <Stack spacing={1}>
+                    <TextField label="标签" variant="outlined" size="small" disabled={inventory != undefined} slotProps={textFieldSlotProps} fullWidth required error={!!errors.code} helperText={errors.code?.message} {...register('code')} />
+                    <TextField label="货架" variant="outlined" size="small" disabled={inventory == undefined} slotProps={textFieldSlotProps} fullWidth required error={!!errors.shelfCode} helperText={errors.shelfCode?.message} {...register('shelfCode')} />
+                    <TextField label="批次号" variant="outlined" size="small" slotProps={textFieldSlotProps} fullWidth required error={!!errors.batchNo} helperText={errors.batchNo?.message} {...register('batchNo')} />
+                    <SupplierAutocomplete label="供应商" required />
+                    <MaterialAutocomplete label="物料" required />
+                    <NumberField label="数量" size="small" fullWidth required error={!!errors.qty} helperText={errors.qty?.message} min={1} max={999999} defaultValue={defaultValues?.qty} onValueChange={x => setValue('qty', x ?? 0)} />
+                </Stack>
+            </Box>
+        </FormProvider>
     );
 });
