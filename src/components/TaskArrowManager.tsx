@@ -1,18 +1,25 @@
 import { useAtomValue } from "jotai";
-import { clickedLocationAtom, locationsAtom, transportTasksAtom } from "../store";
+import { selectedTasksAtom, locationsAtom, transportTasksAtom } from "../store";
 import { AnimatedArrow } from "./AnimatedArrow";
 import type { LocationMapElementModel } from "../types/location";
+import type { TransportTaskMapModel } from "../types/transportTask";
 
 export function TaskArrowManager() {
     const tasks = useAtomValue(transportTasksAtom);
     const locations = useAtomValue(locationsAtom);
-    const clickedLocation = useAtomValue(clickedLocationAtom);
+    const atom = useAtomValue(selectedTasksAtom);
 
-    if (!clickedLocation) {
+    if (!atom) {
         return null;
     }
 
-    const activeTasks = tasks.filter(x => x.startLocationCode === clickedLocation || x.endLocationCode === clickedLocation);
+    let activeTasks: TransportTaskMapModel[] = [];
+    if (atom.taskCode) {
+        activeTasks = tasks.filter(x => x.code === atom.taskCode);
+    } else if (atom.locationCode) {
+        activeTasks = tasks.filter(x => x.startLocationCode === atom.locationCode || x.endLocationCode === atom.locationCode);
+    }
+
     if (activeTasks.length === 0) {
         return null;
     }

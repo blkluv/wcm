@@ -4,7 +4,7 @@ import { DraggableDialogPaperComponent } from "./DraggableDialogPaperComponent";
 import { abortTask, canAbort, canContinue, canRepeat, canTriggerEnd, canTriggerStart, triggerTaskEnd, triggerTaskStart, type TransportTaskMapModel } from "../types/transportTask";
 import { getSourceLocation, getTargetLocation } from "../types/utils";
 import { useAtom } from "jotai";
-import { clickedLocationAtom, shelvesAtom, transportTasksAtom } from "../store";
+import { selectedTasksAtom, shelvesAtom, transportTasksAtom } from "../store";
 import { toYYYYMMDDHHmmss } from "../utils/datetime";
 import { dialogSlotProps } from "./props";
 import { useDialog } from "../hooks/useDialog";
@@ -22,7 +22,7 @@ export function TransportTaskDetailDialog(props: Props) {
     const dialog = useDialog();
     const [tasks, setTasks] = useAtom(transportTasksAtom);
     const [shelves, setShelves] = useAtom(shelvesAtom);
-    const [clickedLocation, setClickedLocation] = useAtom(clickedLocationAtom);
+    const [selectedTasks, setSelectedTasks] = useAtom(selectedTasksAtom);
     const [task, setTask] = useState<TransportTaskMapModel | null>(null);
 
     const doSetTask = () => {
@@ -52,6 +52,12 @@ export function TransportTaskDetailDialog(props: Props) {
         }
     };
 
+    const clean = (task: TransportTaskMapModel) => {
+        if (selectedTasks && (selectedTasks.locationCode === task.startLocationCode || selectedTasks.locationCode === task.endLocationCode || selectedTasks.taskCode === task.code)) {
+            setSelectedTasks(null);
+        }
+    };
+
     const triggerEnd = async () => {
         if (!task) {
             return;
@@ -68,9 +74,7 @@ export function TransportTaskDetailDialog(props: Props) {
                 setShelves([...shelves]);
             }
 
-            if (clickedLocation && (clickedLocation === task.startLocationCode || clickedLocation === task.endLocationCode)) {
-                setClickedLocation(null);
-            }
+            clean(task);
         }
     };
 
@@ -83,10 +87,7 @@ export function TransportTaskDetailDialog(props: Props) {
         if (b) {
             abortTask(task);
             setTasks(tasks.filter(x => x.code !== task.code));
-
-            if (clickedLocation && (clickedLocation === task.startLocationCode || clickedLocation === task.endLocationCode)) {
-                setClickedLocation(null);
-            }
+            clean(task);
         }
     };
 

@@ -2,7 +2,7 @@ import { Button, Dialog, DialogActions, DialogContent, DialogTitle, List, ListIt
 import type { DialogProps, OpenDialogOptions } from "../types/dialog";
 import { DraggableDialogPaperComponent } from "./DraggableDialogPaperComponent";
 import { getLocations } from "../types/utils";
-import { clickedLocationAtom, transportTasksAtom } from "../store";
+import { selectedTasksAtom, transportTasksAtom } from "../store";
 import { useAtom } from "jotai";
 import { transportTaskStatuses } from "../types/enums";
 import { useEffect, useState } from "react";
@@ -26,7 +26,7 @@ export function TransportTasksDialog(props: Props) {
     const dialog = useDialog();
     const [task, setTask] = useState<TransportTaskMapModel | null>(null);
     const [allTasks, setAllTasks] = useAtom(transportTasksAtom);
-    const [clickedLocation, setClickedLocation] = useAtom(clickedLocationAtom);
+    const [selectedTasks, setSelectedTasks] = useAtom(selectedTasksAtom);
     const tasks = payload.tasks
         ? payload.tasks
         : payload.status === transportTaskStatuses.executing
@@ -52,8 +52,8 @@ export function TransportTasksDialog(props: Props) {
             setAllTasks(tasks.filter(x => x.code !== task.code));
             setTask(null);
 
-            if (clickedLocation && (clickedLocation === task.startLocationCode || clickedLocation === task.endLocationCode)) {
-                setClickedLocation(null);
+            if (selectedTasks && (selectedTasks.locationCode === task.startLocationCode || selectedTasks.locationCode === task.endLocationCode || selectedTasks.taskCode === task.code)) {
+                setSelectedTasks(null);
             }
         }
     };
@@ -86,7 +86,7 @@ export function TransportTasksDialog(props: Props) {
                 <List>
                     {
                         tasks.map(x => (
-                            <ListItemButton key={x.code} onClick={() => { setTask(x); setClickedLocation(x.endLocationCode); }} selected={x === task} style={{ flexDirection: 'column', alignItems: 'start' }}>
+                            <ListItemButton key={x.code} onClick={() => { setTask(x); setSelectedTasks({ taskCode: x.code }); }} selected={x === task} style={{ flexDirection: 'column', alignItems: 'start' }}>
                                 <Typography variant="body1" align="left"><b>任务类型</b> {x.businessTypeName}</Typography>
                                 <Typography variant="body1" align="left"><b>任务编码</b> {x.code}</Typography>
                                 <Typography variant="body1" align="left"><b>货架编码</b> {x.shelfCode}</Typography>

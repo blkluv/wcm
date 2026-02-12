@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { LocationMapElement } from "../../components/LocationMapElement";
 import Draggable, { type DraggableData } from "react-draggable";
 import { useAtomValue, useSetAtom } from "jotai";
-import { clickedLocationAtom, inventoriesAtom, locationsAtom, scaleAtom, selectedLocationsAtom, shelvesAtom, transportTasksAtom } from "../../store";
+import { selectedTasksAtom, inventoriesAtom, locationsAtom, scaleAtom, selectedLocationsAtom, shelvesAtom, transportTasksAtom } from "../../store";
 import { getLocationElementId } from "../../types/location";
 import { type Rectangle } from "../../types/rectangle";
 import { intersect } from "../../types/map";
@@ -30,7 +30,7 @@ export function ViewPort(props: Props) {
     const inventories = useAtomValue(inventoriesAtom);
     const tasks = useAtomValue(transportTasksAtom);
     const selectedLocations = useAtomValue(selectedLocationsAtom);
-    const setClickedLocation = useSetAtom(clickedLocationAtom);
+    const setSelectedTasks = useSetAtom(selectedTasksAtom);
 
     const canvasW = Math.round(props.mapW * scale) + borderWidth * 2;
     const canvasH = Math.round(props.mapH * scale) + borderWidth * 2;
@@ -73,7 +73,7 @@ export function ViewPort(props: Props) {
                 if (isDoubleClick) {
                     await dialog.open(LocationDialog, { code: locationCode });
                 } else {
-                    setClickedLocation(locationCode);
+                    setSelectedTasks({ locationCode });
 
                     const shelf = shelves.find(x => x.locationCode === locationCode);
                     if (shelf) {

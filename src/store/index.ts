@@ -69,4 +69,4 @@ export const exceptionalShelfQtyAtom = atom<number>(get => {
 
 export const selectedLocationsAtom = atom<string[]>([]);
 
-export const clickedLocationAtom = atom<string | null>(null);
+export const selectedTasksAtom = atom<{ locationCode?: string; taskCode?: string; } | null>(null);
