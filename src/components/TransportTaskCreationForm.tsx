@@ -2,12 +2,14 @@ import { Box, Stack } from "@mui/material";
 import { useForm, FormProvider } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
-import { locationsAtom, selectedElementAtom, shelvesAtom, transportTasksAtom } from "../store";
+import { locationsAtom, shelvesAtom, transportTasksAtom } from "../store";
 import { useAtom, useAtomValue } from "jotai";
-import { forwardRef, useImperativeHandle } from "react";
+import { forwardRef, useEffect, useImperativeHandle, useState } from "react";
 import { createNew } from "../types/transportTask";
 import { LocationAutocomplete } from "./LocationAutocomplete";
 import { ShelfAutocomplete } from "./ShelfAutocomplete";
+import { customEventTypes } from "../types/enums";
+import type { SelectedElement } from "../types/map";
 
 const schema = yup.object({
     shelfCode: yup.string().required('请选择货架或在地图上选择').max(50, '货架最多50个字符'),
@@ -23,10 +25,32 @@ interface Props {
 
 export const TransportTaskCreationForm = forwardRef((props: Props, ref: React.Ref<{ submit: () => Promise<boolean> }>) => {
     const { shelfCode, toLocationCode } = props;
-    const [selectedElement, setSelectedElement] = useAtom(selectedElementAtom);
+    const [selectedElement, setSelectedElement] = useState<SelectedElement | null>(null);
     const [tasks, setTasks] = useAtom(transportTasksAtom);
     const locations = useAtomValue(locationsAtom);
     const shelves = useAtomValue(shelvesAtom);
+
+    useEffect(() => {
+        const handleLocationEvt = (evt: CustomEventInit<{ code: string; }>) => {
+            if (evt.detail) {
+                setSelectedElement({ code: evt.detail.code, type: 'location' });
+            }
+        };
+
+        const handleShelfEvt = (evt: CustomEventInit<{ code: string; }>) => {
+            if (evt.detail) {
+                setSelectedElement({ code: evt.detail.code, type: 'shelf' });
+            }
+        };
+
+        window.addEventListener(customEventTypes.locationSelected, handleLocationEvt);
+        window.addEventListener(customEventTypes.shelfSelected, handleShelfEvt);
+
+        return () => {
+            window.removeEventListener(customEventTypes.locationSelected, handleLocationEvt);
+            window.removeEventListener(customEventTypes.shelfSelected, handleShelfEvt);
+        }
+    }, []);
 
     const methods = useForm<FormValues>({
         resolver: yupResolver(schema),
@@ -56,19 +80,20 @@ export const TransportTaskCreationForm = forwardRef((props: Props, ref: React.Re
         }
     }));
 
-    if (selectedElement) {
-        if (selectedElement.type === 'shelf') {
-            if (!shelfCode) {
-                setValue('shelfCode', selectedElement.code, { shouldValidate: true });
-            }
-        } else {
-            if (!toLocationCode) {
-                setValue('locationCode', selectedElement.code, { shouldValidate: true });
+    useEffect(() => {
+        if (selectedElement) {
+            if (selectedElement.type === 'shelf') {
+                if (!shelfCode) {
+                    setValue('shelfCode', selectedElement.code, { shouldValidate: true });
+                }
+            } else {
+                if (!toLocationCode) {
+                    setValue('locationCode', selectedElement.code, { shouldValidate: true });
+                }
             }
         }
 
-        setSelectedElement(null);
-    }
+    }, [selectedElement, setValue, shelfCode, toLocationCode]);
 
     return (
         <FormProvider {...methods}>

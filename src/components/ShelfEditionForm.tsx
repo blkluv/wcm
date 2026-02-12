@@ -3,11 +3,13 @@ import { useForm, Controller, FormProvider } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { textFieldSlotProps } from "./props";
-import { selectedElementAtom, shelfModelsAtom, shelvesAtom } from "../store";
+import { shelfModelsAtom, shelvesAtom, transportTasksAtom } from "../store";
 import { useAtom, useAtomValue } from "jotai";
-import { forwardRef, useImperativeHandle } from "react";
+import { forwardRef, useEffect, useImperativeHandle, useState } from "react";
 import type { ShelfMapElementModel } from "../types/shelf";
 import { LocationAutocomplete } from "./LocationAutocomplete";
+import { customEventTypes } from "../types/enums";
+import type { SelectedElement } from "../types/map";
 
 const schema = yup.object({
     code: yup.string().required(),
@@ -24,9 +26,24 @@ interface Props {
 
 export const ShelfEditionForm = forwardRef((props: Props, ref: React.Ref<{ submit: () => Promise<boolean> }>) => {
     const { shelf } = props;
-    const [selectedElement, setSelectedElement] = useAtom(selectedElementAtom);
+    const [selectedElement, setSelectedElement] = useState<SelectedElement | null>(null);
     const [shelves, setShelves] = useAtom(shelvesAtom);
     const shelfModels = useAtomValue(shelfModelsAtom);
+    const tasks = useAtomValue(transportTasksAtom);
+
+    useEffect(() => {
+        const handleEvt = (evt: CustomEventInit<{ code: string; }>) => {
+            if (evt.detail) {
+                setSelectedElement({ code: evt.detail.code, type: 'location' });
+            }
+        };
+
+        window.addEventListener(customEventTypes.locationSelected, handleEvt);
+
+        return () => {
+            window.removeEventListener(customEventTypes.locationSelected, handleEvt);
+        }
+    }, []);
 
     const methods = useForm<FormValues>({
         resolver: yupResolver(schema),
@@ -49,6 +66,16 @@ export const ShelfEditionForm = forwardRef((props: Props, ref: React.Ref<{ submi
     } = methods;
 
     const onSubmit = async (data: FormValues) => {
+        if (data.locationCode !== '') {
+            if (tasks.some(x => x.endLocationCode === data.locationCode)) {
+                throw new Error('指定的库存存在活动任务');
+            }
+
+            if (shelves.some(x => x.code !== shelf.code && x.locationCode === data.locationCode)) {
+                throw new Error('指定的库存存在其他货架');
+            }
+        }
+
         const arr = shelves.filter(x => x.code !== shelf.code);
         arr.push({ code: shelf.code, model: data.model, enabled: data.enabled, locationCode: data.locationCode === '' ? null : data.locationCode });
         setShelves(arr);
@@ -62,14 +89,12 @@ export const ShelfEditionForm = forwardRef((props: Props, ref: React.Ref<{ submi
         }
     }));
 
-    if (selectedElement) {
-        if (selectedElement.type === 'location') {
+    useEffect(() => {
+        if (selectedElement && selectedElement.type === 'location') {
             setValue('locationCode', selectedElement.code, { shouldValidate: true });
-
         }
 
-        setSelectedElement(null);
-    }
+    }, [selectedElement, setValue]);
 
     return (
         <FormProvider {...methods}>

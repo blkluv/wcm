@@ -1,8 +1,8 @@
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Divider, Grid, Typography } from "@mui/material";
 import type { DialogProps, OpenDialogOptions } from "../types/dialog";
 import { DraggableDialogPaperComponent } from "./DraggableDialogPaperComponent";
-import { useAtom, useAtomValue, useSetAtom } from "jotai";
-import { locationsAtom, shelvesAtom, inventoriesAtom, transportTasksAtom, selectedElementAtom } from "../store";
+import { useAtom, useAtomValue } from "jotai";
+import { locationsAtom, shelvesAtom, inventoriesAtom, transportTasksAtom } from "../store";
 import { getShelfModels, type LocationMapElementModel } from "../types/location";
 import { getYesOrNo, transportTaskStatuses } from "../types/enums";
 import { groupByMaterial, type InventoryMapModel } from "../types/inventory";
@@ -32,7 +32,6 @@ export function LocationDialog(props: Props) {
     const shelves = useAtomValue(shelvesAtom);
     const [inventories, setInventories] = useAtom(inventoriesAtom);
     const tasks = useAtomValue(transportTasksAtom);
-    const setSelectedElement = useSetAtom(selectedElementAtom);
 
     const location = locations.find(x => x.code == payload.code);
     const shelf = shelves.find(x => x.locationCode === payload.code);
@@ -40,12 +39,10 @@ export function LocationDialog(props: Props) {
     const locationTasks = tasks.filter(x => x.startLocationCode === payload.code || x.endLocationCode === payload.code);
 
     const transferShelf = async (shelfCode: string) => {
-        setSelectedElement(null);
         await dialog.open(TransportTaskCreationDialog, { shelfCode: shelfCode });
     };
 
     const transferShelfToHere = async () => {
-        setSelectedElement(null);
         await dialog.open(TransportTaskCreationDialog, { toLocationCode: payload.code });
     };
 

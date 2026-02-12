@@ -32,3 +32,8 @@ transportTaskStatusNames[-1] = '已中断';
 export function getYesOrNo(b: boolean) {
     return b ? 'Y' : 'N';
 }
+
+export const customEventTypes = {
+    locationSelected: 'locationSelected',
+    shelfSelected: 'shelfSelected'
+} as const;
