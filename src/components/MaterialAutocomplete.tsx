@@ -40,10 +40,10 @@ export function MaterialAutocomplete(props: { label?: string; required: boolean;
                     options={options}
                     forcePopupIcon={false}
                     getOptionKey={option => option.code}
-                    getOptionLabel={option => getDisplayName(option)}
+                    getOptionLabel={option => getDisplayName(option.code, option.name)}
                     renderOption={(props, option) => (
                         <li {...props} key={option.code}>
-                            {getDisplayName(option)}
+                            {getDisplayName(option.code, option.name)}
                         </li>
                     )}
                     size="small"
