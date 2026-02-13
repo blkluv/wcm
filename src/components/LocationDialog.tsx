@@ -4,7 +4,7 @@ import { DraggableDialogPaperComponent } from "./DraggableDialogPaperComponent";
 import { useAtom, useAtomValue } from "jotai";
 import { locationsAtom, shelvesAtom, inventoriesAtom, transportTasksAtom } from "../store";
 import { getShelfModels, type LocationMapElementModel } from "../types/location";
-import { getYesOrNo, transportTaskStatuses } from "../types/enums";
+import { getInventoryStatusName, getYesOrNo, transportTaskStatuses } from "../types/enums";
 import { groupByMaterial, type InventoryMapModel } from "../types/inventory";
 import { Fragment } from "react/jsx-runtime";
 import { useDialog } from "../hooks/useDialog";
@@ -251,7 +251,7 @@ function LocationInventoryPanel({ inventory }: { inventory: InventoryMapModel })
                 <Typography variant="body1">状态</Typography>
             </Grid>
             <Grid size={8}>
-                <Typography variant="body2">{inventory.status}</Typography>
+                <Typography variant="body2">{getInventoryStatusName(inventory.status)}</Typography>
             </Grid>
         </Grid>
     );

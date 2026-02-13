@@ -10,6 +10,7 @@ import { useState } from "react";
 import { useDialog } from "../hooks/useDialog";
 import { InventoryEditDialog } from "./InventoryEditDialog";
 import { getDisplayName } from "../utils";
+import { getInventoryStatusName } from "../types/enums";
 
 interface Payload extends OpenDialogOptions<void> {
     shelfCode: string;
@@ -59,7 +60,7 @@ export function InventoryDialog(props: Props) {
                                 <Typography variant="body1" align="left"><b>物料</b> {getDisplayName(x.materialCode, x.materialName)}</Typography>
                                 <Typography variant="body1" align="left"><b>批次号</b> {x.batchNo}</Typography>
                                 <Typography variant="body1" align="left"><b>数量</b> {x.qty}</Typography>
-                                <Typography variant="body1" align="left"><b>状态</b> {x.status}</Typography>
+                                <Typography variant="body1" align="left"><b>状态</b> {getInventoryStatusName(x.status)}</Typography>
                             </ListItemButton>
                         ))
                     }
