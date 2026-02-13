@@ -75,6 +75,10 @@ export function createNew(shelfCode: string, toLocationCode: string, shelves: Sh
         throw new Error('End location not found.');
     }
 
+    if (!endLocation.enabled) {
+        throw new Error('End location not enabled.');
+    }
+
     if (tasks.some(x => x.endLocationCode === endLocation.code)) {
         throw new Error('End location has active task.');
     }
