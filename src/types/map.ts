@@ -36,3 +36,8 @@ export interface SearchResult {
     type: '库位' | '货架' | '库存' | '物料' | '供应商';
     locationCodes: string[];
 }
+
+export interface SelectedElement {
+    code: string;
+    type: 'location' | 'shelf';
+}

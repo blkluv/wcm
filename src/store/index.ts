@@ -9,7 +9,7 @@ import type { MapElementLayerCtrl } from "../types/map";
 import type { Material } from "../types/material";
 import type { Supplier } from "../types/supplier";
 
-export const globalAlertAtom = atom<string[]>([]);
+export const globalAlertAtom = atom<string | null>();
 
 export const layerCtrlAtom = atom<MapElementLayerCtrl>({
     area: true,
@@ -69,6 +69,4 @@ export const exceptionalShelfQtyAtom = atom<number>(get => {
 
 export const selectedLocationsAtom = atom<string[]>([]);
 
-export const selectedElementAtom = atom<{ code: string; type: 'location' | 'shelf' } | null>(null);
-
-export const clickedLocationAtom = atom<string | null>(null);
+export const selectedTasksAtom = atom<{ locationCode?: string; taskCode?: string; } | null>(null);

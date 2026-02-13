@@ -1,20 +1,21 @@
 import { Autocomplete, TextField } from "@mui/material";
 import { useEffect, useState } from "react";
-import type { LocationMapElementModel } from "../types/location";
 import { textFieldSlotProps } from "./props";
 import { useAtomValue } from "jotai";
-import { locationsAtom } from "../store";
+import { supplersAtom } from "../store";
 import { Controller, useFormContext } from "react-hook-form";
+import type { Supplier } from "../types/supplier";
+import { getDisplayName } from "../utils";
 
-export function LocationAutocomplete(props: { label?: string; required: boolean; disabled?: boolean; }) {
+export function SupplierAutocomplete(props: { label?: string; required: boolean; }) {
     const [open, setOpen] = useState(false);
-    const { control } = useFormContext<{ locationCode: string; }>();
+    const { control } = useFormContext<{ supplierCode: string; }>();
     const [inputValue, setInputValue] = useState('');
-    const [options, setOptions] = useState<LocationMapElementModel[]>([]);
-    const locations = useAtomValue(locationsAtom);
+    const [options, setOptions] = useState<Supplier[]>([]);
+    const suppliers = useAtomValue(supplersAtom);
 
     const doSearch = () => {
-        setOptions(locations.filter(x => x.code.toLowerCase().includes(inputValue.toLowerCase())));
+        setOptions(suppliers.filter(x => x.code.toLowerCase().includes(inputValue.toLowerCase())));
     };
 
     useEffect(() => {
@@ -22,15 +23,15 @@ export function LocationAutocomplete(props: { label?: string; required: boolean;
             doSearch();
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [inputValue, open, locations]);
+    }, [inputValue, open, suppliers]);
 
     return (
-        <Controller name="locationCode" control={control}
+        <Controller name="supplierCode" control={control}
             render={({ field: { onChange, value, ref }, fieldState: { error } }) => (
                 <Autocomplete open={open}
                     onOpen={() => setOpen(true)}
                     onClose={() => setOpen(false)}
-                    value={{ code: value, level: 0, externalCode: '', shelfModels: [], enabled: true, areaCode: '', x: 0, y: 0, w: 0, h: 0 }}
+                    value={{ code: value, name: '' }}
                     inputValue={inputValue}
                     onInputChange={(_, newInputValue) => setInputValue(newInputValue)}
                     noOptionsText={inputValue.length === 0 ? null : "无匹配项"}
@@ -39,9 +40,13 @@ export function LocationAutocomplete(props: { label?: string; required: boolean;
                     options={options}
                     forcePopupIcon={false}
                     getOptionKey={option => option.code}
-                    getOptionLabel={option => option.code}
+                    getOptionLabel={option => getDisplayName(option.code, option.name)}
+                    renderOption={(props, option) => (
+                        <li {...props} key={option.code}>
+                            {getDisplayName(option.code, option.name)}
+                        </li>
+                    )}
                     size="small"
-                    disabled={props.disabled ?? false}
                     renderInput={(params) => <TextField {...params} required={props.required} slotProps={textFieldSlotProps} variant="outlined" label={props.label} error={!!error} helperText={error?.message} inputRef={ref} />}
                 />
             )}

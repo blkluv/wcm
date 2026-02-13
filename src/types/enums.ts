@@ -6,6 +6,10 @@ export function getTransportTaskStatusName(status: number) {
     return getStatusName(status, transportTaskStatusNames);
 }
 
+export function getInventoryStatusName(status: number) {
+    return getStatusName(status, inventoryStatusNames);
+}
+
 export const EventTypes = {
     globalError: 'globalError',
     globalLoading: 'globalLoading',
@@ -29,6 +33,19 @@ const transportTaskStatusNames: { [key: number]: string } = {
 };
 transportTaskStatusNames[-1] = '已中断';
 
+export const inventoryStatuses = {
+    qualified: 0
+} as const;
+
+const inventoryStatusNames: { [key: number]: string } = {
+    0: '合格'
+};
+
 export function getYesOrNo(b: boolean) {
     return b ? 'Y' : 'N';
 }
+
+export const customEventTypes = {
+    locationSelected: 'locationSelected',
+    shelfSelected: 'shelfSelected'
+} as const;

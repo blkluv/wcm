@@ -46,7 +46,6 @@ export function AreaAutocomplete(props: { label?: string; required: boolean; }) 
                         </li>
                     )}
                     size="small"
-                    
                     renderInput={(params) => <TextField {...params} required={props.required} slotProps={textFieldSlotProps} variant="outlined" label={props.label} error={!!error} helperText={error?.message} inputRef={ref} />}
                 />
             )}
