@@ -132,6 +132,30 @@
             "y": 0,
             "w": 100,
             "h": 100
+        },
+        {
+            "code": "L12",
+            "shelfModels": ["1212", "1313"],
+            "enabled": true,
+            "areaCode": "A1",
+            "externalCode": "L11",
+            "level": 1
+        },
+        {
+            "code": "L13",
+            "shelfModels": ["1212", "1313"],
+            "enabled": true,
+            "areaCode": "A1",
+            "externalCode": "L11",
+            "level": 1
+        },
+        {
+            "code": "L14",
+            "shelfModels": ["1212", "1313"],
+            "enabled": true,
+            "areaCode": "A1",
+            "externalCode": "L11",
+            "level": 1
         }
     ]
 }

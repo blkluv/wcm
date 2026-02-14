@@ -1,5 +1,5 @@
 import { Badge, Paper, Stack, Typography } from "@mui/material";
-import { type LocationMapElementModel } from "../types/location";
+import { type ValidLocationMapElementModel } from "../types/location";
 import { getLocationStyle } from "../types/map";
 import type { ShelfMapElementModel } from "../types/shelf";
 import type { TransportTaskMapModel } from "../types/transportTask";
@@ -8,7 +8,7 @@ import LockIcon from "@mui/icons-material/Lock";
 import CloseIcon from "@mui/icons-material/Close";
 
 interface Props {
-    location: LocationMapElementModel;
+    location: ValidLocationMapElementModel;
     shelf?: ShelfMapElementModel;
     inventories: InventoryMapModel[];
     arriveTasks: TransportTaskMapModel[];
