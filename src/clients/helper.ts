@@ -1,17 +1,16 @@
-import { publish } from "../store/event";
 import type { ApiResult } from "../types/api";
-import { EventTypes } from "../types/event";
+import { generateFetchExEvent } from "../types/event";
 
-export async function doFetch<T>(url: string, defValue: T, init?: RequestInit, globalLoading: boolean = false, loadingKey: string = EventTypes.globalLoading) {
+export async function doFetch<T>(url: string, defValue: T, init?: RequestInit, globalLoading: boolean = false /* loadingKey: string */) {
     try {
         if (globalLoading) {
-            publish(loadingKey, true);
+            // TODO
         }
 
         const resp = await fetch(url, init);
 
         if (globalLoading) {
-            publish(loadingKey, false);
+            // TODO
         }
 
         if (resp.headers.get('content-type')?.startsWith('application/json')) {
@@ -29,16 +28,14 @@ export async function doFetch<T>(url: string, defValue: T, init?: RequestInit, g
                 if (typeof defValue === 'object') {
                     return json['value'] as T;
                 }
-
             } else {
-                publish(EventTypes.globalError, result.message);
+                window.dispatchEvent(generateFetchExEvent(result.message!));
             }
         } else {
-            publish(EventTypes.globalError, resp.status);
+            window.dispatchEvent(generateFetchExEvent(`${resp.status}`));
         }
     } catch (error) {
-        console.log(error);
-        // publish(EventTypes.globalError, error);
+        window.dispatchEvent(generateFetchExEvent((error as Error).message));
     }
 
     return defValue;
