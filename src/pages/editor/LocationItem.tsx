@@ -4,6 +4,7 @@ import type { LocationMapElementModel } from "../../types/location";
 import type { ShelfMapElementModel } from "../../types/shelf";
 import { groupByMaterial, type InventoryMapModel } from "../../types/inventory";
 import { useDrag } from "react-dnd";
+import { useCallback, useRef } from "react";
 
 interface Props {
     location: LocationMapElementModel;
@@ -13,6 +14,7 @@ interface Props {
 
 export function LocationItem(props: Props) {
     const { location, shelf, inventories } = props;
+    const ref = useRef<HTMLDivElement>(null);
 
     const [{ isDragging }, drag] = useDrag(() => ({
         type: 'location',
@@ -27,6 +29,11 @@ export function LocationItem(props: Props) {
             isDragging: monitor.isDragging()
         })
     }));
+
+    const setRef = useCallback((node: HTMLDivElement | null) => {
+        ref.current = node;
+        drag(node);
+    }, [drag]);
 
     const elements = [];
     if (inventories.length === 1) {
@@ -48,7 +55,7 @@ export function LocationItem(props: Props) {
     }
 
     return (
-        <Paper ref={drag as unknown as React.Ref<HTMLDivElement>} elevation={0} variant="outlined" style={{ width: `100px`, height: `100px`, cursor: 'move', userSelect: 'none', opacity: `${isDragging ? 0.4 : 1}` }} data-location-code={location.code}>
+        <Paper ref={setRef} elevation={0} variant="outlined" style={{ width: `100px`, height: `100px`, cursor: 'move', userSelect: 'none', opacity: `${isDragging ? 0.4 : 1}` }} data-location-code={location.code}>
             <div style={{ width: `${location.w}px`, height: `${location.h}px`, position: 'relative', alignContent: 'center' }}>
                 {closeIcon}
                 <Stack spacing={0} alignItems="center" justifyItems="flex-start" style={{ height: '100%' }}>

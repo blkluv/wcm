@@ -6,6 +6,7 @@ import { textFieldSlotProps } from "../../components/props";
 import type { InventoryMapModel } from "../../types/inventory";
 import { checkRectangle, getLocationElementId } from "../../types/location";
 import { LocationItem } from "./LocationItem";
+import { filterTake } from "../../types/utils";
 
 export function Sidebar() {
     const [open, setOpen] = useState(false);
@@ -17,7 +18,7 @@ export function Sidebar() {
     const inventories = useAtomValue(inventoriesAtom);
 
     const doSearch = () => {
-        setOptions(locations.filter(x => x.code.toLowerCase().includes(inputValue.toLowerCase())).map(x => x.code));
+        setOptions(filterTake(locations, x => !checkRectangle(x) && x.code.toLowerCase().includes(inputValue.toLowerCase()), 20).map(x => x.code));
     };
 
     useEffect(() => {
@@ -30,6 +31,10 @@ export function Sidebar() {
     const locationElements = [];
     for (const location of locations) {
         if (checkRectangle(location)) {
+            continue;
+        }
+
+        if (value !== '' && location.code !== value) {
             continue;
         }
 
@@ -56,7 +61,7 @@ export function Sidebar() {
                 options={options}
                 forcePopupIcon={false}
                 size="small"
-                renderInput={(params) => <TextField {...params} slotProps={textFieldSlotProps} variant="outlined" placeholder="搜索" />}
+                renderInput={(params) => <TextField {...params} slotProps={textFieldSlotProps} variant="outlined" placeholder="搜索库位" />}
             />
             <Stack direction="row" justifyContent="flex-start" flexWrap="wrap">
                 {locationElements}
