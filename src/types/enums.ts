@@ -46,6 +46,7 @@ export function getYesOrNo(b: boolean) {
 }
 
 export const customEventTypes = {
+    fetchExCaught: 'fetchExCaught',
     locationSelected: 'locationSelected',
     shelfSelected: 'shelfSelected'
 } as const;

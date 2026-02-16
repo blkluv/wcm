@@ -4,16 +4,21 @@ import { Home } from "./pages/home/Home";
 import { DialogsProvider } from "./hooks/DialogsProvider";
 import { SnackbarProvider, enqueueSnackbar } from "notistack";
 import { useEffect } from "react";
+import { Editor } from "./pages/editor/Editor";
 
 const router = createBrowserRouter([
     {
         children: [
             {
-                path: '*',
-                Component: Home,
+                path: '/editor',
+                Component: Editor
             },
-        ],
-    },
+            {
+                path: '*',
+                Component: Home
+            }
+        ]
+    }
 ]);
 
 export function App() {
@@ -26,12 +31,12 @@ export function App() {
                     : typeof event.reason === 'string'
                         ? event.reason
                         : '发生未知错误，请稍后重试';
-            enqueueSnackbar(message, { anchorOrigin: { vertical: 'top', horizontal: 'center' }, variant: 'error' });
+            enqueueSnackbar(message, { variant: 'error' });
         };
 
         const handleError = (event: ErrorEvent) => {
             event.preventDefault();
-            enqueueSnackbar(event.message, { anchorOrigin: { vertical: 'top', horizontal: 'center' }, variant: 'error' });
+            enqueueSnackbar(event.message, { variant: 'error' });
         };
 
         window.addEventListener('unhandledrejection', handleRejection);
@@ -46,7 +51,7 @@ export function App() {
     return (
         <>
             <CssBaseline enableColorScheme />
-            <SnackbarProvider maxSnack={5} />
+            <SnackbarProvider maxSnack={5} anchorOrigin={{ vertical: 'top', horizontal: 'center' }} />
             <DialogsProvider>
                 <RouterProvider router={router} />
             </DialogsProvider>

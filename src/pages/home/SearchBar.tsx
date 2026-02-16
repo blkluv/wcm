@@ -8,6 +8,7 @@ import { filterTake, groupBy } from "../../types/utils";
 import { inventoriesAtom, locationsAtom, selectedLocationsAtom, shelvesAtom } from "../../store";
 import { useAtomValue, useSetAtom } from "jotai";
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router";
 
 interface Props {
     refresh: () => Promise<void>;
@@ -85,6 +86,7 @@ export function SearchBar(props: Props) {
     const [open, setOpen] = useState(false);
     const [inputValue, setInputValue] = useState('');
     const [options, setOptions] = useState<SearchResult[]>([]);
+    const navigate = useNavigate();
 
     const doSearch = () => {
         const list = search(inputValue, locations, shelves, inventories);
@@ -125,7 +127,7 @@ export function SearchBar(props: Props) {
                     <IconButton size="medium">
                         <Settings />
                     </IconButton>
-                    <IconButton size="medium">
+                    <IconButton size="medium" onClick={() => navigate('/editor')}>
                         <Edit />
                     </IconButton>
                     <IconButton size="medium" onClick={async () => await props.refresh()}>

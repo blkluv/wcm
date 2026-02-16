@@ -11,7 +11,7 @@ export async function getAreas(): Promise<AreaMapElementModel[]> {
 }
 
 export async function getLocations(): Promise<LocationMapElementModel[]> {
-    const url = '/locations.json';
+    const url = '/map-locations.json';
     return await doFetch(url, [], { method: 'get' });
 }
 
