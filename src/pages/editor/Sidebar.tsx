@@ -1,10 +1,10 @@
 import { Autocomplete, Stack, TextField } from "@mui/material";
-import { useAtomValue } from "jotai";
+import { useAtomValue, useAtom } from "jotai";
 import { useEffect, useState } from "react";
-import { inventoriesAtom, locationsAtom, shelvesAtom } from "../../store";
+import { inventoriesAtom, hiddenLocationsAtom, shelvesAtom } from "../../store";
 import { textFieldSlotProps } from "../../components/props";
 import type { InventoryMapModel } from "../../types/inventory";
-import { checkRectangle, getLocationElementId } from "../../types/location";
+import { getLocationElementId } from "../../types/location";
 import { LocationItem } from "./LocationItem";
 import { filterTake } from "../../types/utils";
 
@@ -13,12 +13,12 @@ export function Sidebar() {
     const [value, setValue] = useState('');
     const [inputValue, setInputValue] = useState('');
     const [options, setOptions] = useState<string[]>([]);
-    const locations = useAtomValue(locationsAtom);
+    const [locations, setLocations] = useAtom(hiddenLocationsAtom);
     const shelves = useAtomValue(shelvesAtom);
     const inventories = useAtomValue(inventoriesAtom);
 
     const doSearch = () => {
-        setOptions(filterTake(locations, x => !checkRectangle(x) && x.code.toLowerCase().includes(inputValue.toLowerCase()), 20).map(x => x.code));
+        setOptions(filterTake(locations, x => x.code.toLowerCase().includes(inputValue.toLowerCase()), 20).map(x => x.code));
     };
 
     useEffect(() => {
@@ -28,12 +28,14 @@ export function Sidebar() {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [inputValue, open, locations]);
 
+    const handleDropEnd = (code: string) => {
+        setLocations(prev => {
+            return prev.filter(x => x.code !== code);
+        });
+    };
+
     const locationElements = [];
     for (const location of locations) {
-        if (checkRectangle(location)) {
-            continue;
-        }
-
         if (value !== '' && location.code !== value) {
             continue;
         }
@@ -44,7 +46,7 @@ export function Sidebar() {
             shelfInventories = inventories.filter(x => x.shelfCode == shelf.code);
         }
 
-        locationElements.push(<LocationItem key={getLocationElementId(location)} location={location} shelf={shelf} inventories={shelfInventories} />);
+        locationElements.push(<LocationItem key={getLocationElementId(location)} location={location} shelf={shelf} inventories={shelfInventories} dropEnd={handleDropEnd} />);
     }
 
     return (

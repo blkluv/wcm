@@ -3,7 +3,7 @@ import { LocationMapElement } from "../../components/LocationMapElement";
 import Draggable, { type DraggableData } from "react-draggable";
 import { useAtomValue, useSetAtom } from "jotai";
 import { selectedTasksAtom, inventoriesAtom, locationsAtom, scaleAtom, selectedLocationsAtom, shelvesAtom, transportTasksAtom } from "../../store";
-import { checkRectangle, getLocationElementId } from "../../types/location";
+import { getLocationElementId } from "../../types/location";
 import { type Rectangle } from "../../types/rectangle";
 import { intersect } from "../../types/map";
 import type { InventoryMapModel } from "../../types/inventory";
@@ -94,13 +94,7 @@ export function ViewPort(props: Props) {
     };
 
     const locationElements = [];
-    for (const item of locations) {
-        if (!checkRectangle(item)) {
-            continue;
-        }
-
-        const location = { ...item, x: item.x!, y: item.y!, w: item.w!, h: item.h! };
-
+    for (const location of locations) {
         if (!intersect(location, borderWidth, borderWidth, scale, viewBounds)) {
             continue;
         }

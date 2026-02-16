@@ -2,7 +2,7 @@ import { useAtom, useAtomValue } from "jotai";
 import { useDrop } from "react-dnd";
 import { inventoriesAtom, locationsAtom, shelvesAtom } from "../../store";
 import type { InventoryMapModel } from "../../types/inventory";
-import { checkRectangle, getLocationElementId } from "../../types/location";
+import { getLocationElementId, type Location } from "../../types/location";
 import { LocationMapElement } from "../../components/LocationMapElement";
 import { useCallback, useRef } from "react";
 
@@ -14,7 +14,7 @@ export function MapCanvas() {
 
     const [, drop] = useDrop(() => ({
         accept: 'location',
-        drop: (item: { code: string; }, monitor) => {
+        drop: (item: Location, monitor) => {
             const clientOffset = monitor.getClientOffset();
             const initialClientOffset = monitor.getInitialClientOffset();
             const initialSourceClientOffset = monitor.getInitialSourceClientOffset();
@@ -33,16 +33,10 @@ export function MapCanvas() {
 
                 offset = { x, y };
 
-                const arr = locations.filter(x => x.code !== item.code);
-                const location = locations.find(x => x.code === item.code);
-                if (location) {
-                    location.x = x;
-                    location.y = y;
-                    location.w = 100;
-                    location.h = 100;
-                    arr.push(location);
-                    setLocations(arr);
-                }
+                const location = { ...item, x, y, w: 100, h: 100 };
+                setLocations(prev => {
+                    return [...prev, location];
+                });
             }
 
             return { code: 'MapCanvas', offset };
@@ -55,12 +49,7 @@ export function MapCanvas() {
     }, [drop]);
 
     const locationElements = [];
-    for (const item of locations) {
-        if (!checkRectangle(item)) {
-            continue;
-        }
-
-        const location = { ...item, x: item.x!, y: item.y!, w: item.w!, h: item.h! };
+    for (const location of locations) {
         const shelf = shelves.find(x => x.locationCode == location.code);
         let shelfInventories: InventoryMapModel[] = [];
         if (shelf) {

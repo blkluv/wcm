@@ -1,30 +1,31 @@
 import { Paper, Stack, Typography } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
-import type { LocationMapElementModel } from "../../types/location";
+import type { Location } from "../../types/location";
 import type { ShelfMapElementModel } from "../../types/shelf";
 import { groupByMaterial, type InventoryMapModel } from "../../types/inventory";
 import { useDrag } from "react-dnd";
 import { useCallback, useRef } from "react";
 
 interface Props {
-    location: LocationMapElementModel;
+    location: Location;
     shelf?: ShelfMapElementModel;
     inventories: InventoryMapModel[];
+    dropEnd: (code: string) => void;
 }
 
 export function LocationItem(props: Props) {
-    const { location, shelf, inventories } = props;
+    const { location, shelf, inventories, dropEnd } = props;
     const ref = useRef<HTMLDivElement>(null);
 
     const [{ isDragging }, drag] = useDrag(() => ({
         type: 'location',
-        item: { code: location.code },
-        // end: (item, monitor) => {
-        //     const dropResult = monitor.getDropResult<{ code: string, offset: { x: number; y: number; } | null }>();
-        //     if (item && dropResult) {
-
-        //     }
-        // },
+        item: location,
+        end: (item, monitor) => {
+            const dropResult = monitor.getDropResult<{ code: string, offset: { x: number; y: number; } | null }>();
+            if (item && dropResult) {
+                dropEnd(item.code);
+            }
+        },
         collect: (monitor) => ({
             isDragging: monitor.isDragging()
         })
@@ -56,7 +57,7 @@ export function LocationItem(props: Props) {
 
     return (
         <Paper ref={setRef} elevation={0} variant="outlined" style={{ width: `100px`, height: `100px`, cursor: 'move', userSelect: 'none', opacity: `${isDragging ? 0.4 : 1}` }} data-location-code={location.code}>
-            <div style={{ width: `${location.w}px`, height: `${location.h}px`, position: 'relative', alignContent: 'center' }}>
+            <div style={{ width: `100px`, height: `100px`, position: 'relative', alignContent: 'center' }}>
                 {closeIcon}
                 <Stack spacing={0} alignItems="center" justifyItems="flex-start" style={{ height: '100%' }}>
                     <Typography variant="subtitle1">{location.code}</Typography>
