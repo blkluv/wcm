@@ -6,7 +6,7 @@ export function LoadingProgress() {
             <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%', width: '100%' }}>
                 <div style={{ width: '500px', textAlign: 'center' }}>
                     <LinearProgress color="primary" />
-                    <p>地图元素加载中......</p>
+                    <p>Loading map elements...</p>
                 </div>
             </div>
         </div>

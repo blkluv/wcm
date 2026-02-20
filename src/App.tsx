@@ -30,7 +30,7 @@ export function App() {
                     ? event.reason.message
                     : typeof event.reason === 'string'
                         ? event.reason
-                        : '发生未知错误，请稍后重试';
+                        : 'An unknown error occurred, please try again later.';
             enqueueSnackbar(message, { variant: 'error' });
         };
 

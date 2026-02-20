@@ -91,13 +91,13 @@ export function createNew(shelfCode: string, toLocationCode: string, shelves: Sh
         startLocationCode: startLocation.code,
         endLocationCode: toLocationCode,
         businessTypeCode: 'F01',
-        businessTypeName: '货架调度',
+        businessTypeName: 'Shelf Dispatch', 
         status: transportTaskStatuses.executing,
         externalTaskCode: null,
         agvCode: null,
         shelfAngle: null,
         priority: 127,
-        createdBy: '管理员',
+        createdBy: 'Admin', 
         createdAt: new Date(),
         leavedAt: null,
         arrivedAt: null,
@@ -108,16 +108,16 @@ export function createNew(shelfCode: string, toLocationCode: string, shelves: Sh
 
 export function triggerTaskStart(task: TransportTaskMapModel) {
     task.leavedAt = new Date();
-    task.message = '被管理员触发开始';
+    task.message = 'Started by admin'; 
 }
 
 export function triggerTaskEnd(task: TransportTaskMapModel) {
     task.status = transportTaskStatuses.completed;
     task.arrivedAt = new Date();
-    task.message = '被管理员触发结束';
+    task.message = 'Completed by admin'; 
 }
 
 export function abortTask(task: TransportTaskMapModel) {
     task.status = transportTaskStatuses.aborted;
-    task.message = '被管理员中断';
+    task.message = 'Aborted by admin'; 
 }

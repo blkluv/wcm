@@ -28,13 +28,13 @@ export function ShelfEditionDialog(props: Props) {
 
     return (
         <Dialog maxWidth="xs" fullWidth open={open} PaperComponent={DraggableDialogPaperComponent} hideBackdrop disableEscapeKeyDown disableEnforceFocus slotProps={dialogSlotProps}>
-            <DialogTitle style={{ cursor: 'move' }}>编辑货架 {payload.shelf.code}</DialogTitle>
+            <DialogTitle style={{ cursor: 'move' }}>Edit Shelf {payload.shelf.code}</DialogTitle>
             <DialogCloseButton close={onClose} />
             <DialogContent>
                 <ShelfEditionForm ref={formRef} shelf={payload.shelf} />
             </DialogContent>
             <DialogActions>
-                <Button size="small" variant="contained" onClick={handleClick}>提交</Button>
+                <Button size="small" variant="contained" onClick={handleClick}>Submit</Button>
             </DialogActions>
         </Dialog>
     );

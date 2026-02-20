@@ -33,7 +33,7 @@ export function intersect(element: Rectangle, offsetX: number, offsetY: number, 
 
 export interface SearchResult {
     code: string;
-    type: '库位' | '货架' | '库存' | '物料' | '供应商';
+    type: 'Location' | 'Shelf' | 'Inventory' | 'Material' | 'Supplier';
     locationCodes: string[];
 }
 

@@ -27,15 +27,15 @@ export function InventoryEditDialog(props: Props) {
         }
     };
 
-    return (
+return (
         <Dialog maxWidth="xs" fullWidth open={open} PaperComponent={DraggableDialogPaperComponent} hideBackdrop disableEscapeKeyDown disableEnforceFocus slotProps={dialogSlotProps}>
-            <DialogTitle style={{ cursor: 'move' }}>{payload.inventory ? '编辑库存' : '新增库存'}</DialogTitle>
+            <DialogTitle style={{ cursor: 'move' }}>{payload.inventory ? 'Edit Inventory' : 'Add Inventory'}</DialogTitle>
             <DialogCloseButton close={onClose} />
             <DialogContent>
                 <InventoryEditForm ref={formRef} shelfCode={payload.shelfCode} inventory={payload.inventory} />
             </DialogContent>
             <DialogActions>
-                <Button size="small" variant="contained" onClick={handleClick}>提交</Button>
+                <Button size="small" variant="contained" onClick={handleClick}>Submit</Button>
             </DialogActions>
         </Dialog>
     );

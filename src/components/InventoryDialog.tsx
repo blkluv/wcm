@@ -37,8 +37,8 @@ export function InventoryDialog(props: Props) {
 
     const deleteInventory = async () => {
         if (inventory) {
-            const b = await dialog.confirm(`确定删除库存 ${inventory.code}？`, { severity: 'warning' });
-            if (b) {
+            const confirmed = await dialog.confirm(`Are you sure you want to delete inventory ${inventory.code}?`, { severity: 'warning' });
+            if (confirmed) {
                 const arr = inventories.filter(x => x.code !== inventory.code);
                 setInventories(arr);
                 setInventory(null);
@@ -48,28 +48,28 @@ export function InventoryDialog(props: Props) {
 
     return (
         <Dialog maxWidth="xs" fullWidth open={open} PaperComponent={DraggableDialogPaperComponent} hideBackdrop disableEscapeKeyDown disableEnforceFocus slotProps={dialogSlotProps}>
-            <DialogTitle style={{ cursor: 'move' }}>货架 {payload.shelfCode} 库存详情</DialogTitle>
+            <DialogTitle style={{ cursor: 'move' }}>Shelf {payload.shelfCode} Inventory Details</DialogTitle>
             <DialogCloseButton close={onClose} />
             <DialogContent>
                 <List>
                     {
                         shelfInventories.map(x => (
                             <ListItemButton key={x.code} onClick={() => setInventory(x)} selected={x === inventory} style={{ flexDirection: 'column', alignItems: 'start' }}>
-                                <Typography variant="body1" align="left"><b>箱标签</b> {x.code}</Typography>
-                                <Typography variant="body1" align="left"><b>供应商</b> {getDisplayName(x.supplierCode, x.supplierName)}</Typography>
-                                <Typography variant="body1" align="left"><b>物料</b> {getDisplayName(x.materialCode, x.materialName)}</Typography>
-                                <Typography variant="body1" align="left"><b>批次号</b> {x.batchNo}</Typography>
-                                <Typography variant="body1" align="left"><b>数量</b> {x.qty}</Typography>
-                                <Typography variant="body1" align="left"><b>状态</b> {getInventoryStatusName(x.status)}</Typography>
+                                <Typography variant="body1" align="left"><b>Box Label</b> {x.code}</Typography>
+                                <Typography variant="body1" align="left"><b>Supplier</b> {getDisplayName(x.supplierCode, x.supplierName)}</Typography>
+                                <Typography variant="body1" align="left"><b>Material</b> {getDisplayName(x.materialCode, x.materialName)}</Typography>
+                                <Typography variant="body1" align="left"><b>Batch No.</b> {x.batchNo}</Typography>
+                                <Typography variant="body1" align="left"><b>Quantity</b> {x.qty}</Typography>
+                                <Typography variant="body1" align="left"><b>Status</b> {getInventoryStatusName(x.status)}</Typography>
                             </ListItemButton>
                         ))
                     }
                 </List>
             </DialogContent>
             <DialogActions>
-                <Button size="small" variant="contained" color="inherit" onClick={bindInventory}>新增库存</Button>
-                <Button size="small" variant="contained" color="inherit" disabled={!inventory} onClick={editInventory}>编辑库存</Button>
-                <Button size="small" variant="contained" color="warning" disabled={!inventory} onClick={deleteInventory}>删除库存</Button>
+                <Button size="small" variant="contained" color="inherit" onClick={bindInventory}>Add Inventory</Button>
+                <Button size="small" variant="contained" color="inherit" disabled={!inventory} onClick={editInventory}>Edit Inventory</Button>
+                <Button size="small" variant="contained" color="warning" disabled={!inventory} onClick={deleteInventory}>Delete Inventory</Button>
             </DialogActions>
         </Dialog>
     );

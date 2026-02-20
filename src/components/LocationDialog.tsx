@@ -51,7 +51,7 @@ export function LocationDialog(props: Props) {
         if (locationTasks.length === 1) {
             await dialog.open(TransportTaskDetailDialog, { code: locationTasks[0].code });
         } else if (locationTasks.length > 1) {
-            await dialog.open(TransportTasksDialog, { status: transportTaskStatuses.executing, title: `库位 ${payload.code} 执行中的任务`, tasks: locationTasks });
+            await dialog.open(TransportTasksDialog, { status: transportTaskStatuses.executing, title: `Location ${payload.code} - Active Tasks`, tasks: locationTasks });
         }
     };
 
@@ -64,8 +64,8 @@ export function LocationDialog(props: Props) {
     };
 
     const deleteInventory = async (inventory: InventoryMapModel) => {
-        const b = await dialog.confirm(`确定删除库存 ${inventory.code}？`, { severity: 'warning' });
-        if (b) {
+        const confirmed = await dialog.confirm(`Are you sure you want to delete inventory ${inventory.code}?`, { severity: 'warning' });
+        if (confirmed) {
             const arr = inventories.filter(x => x.code !== inventory.code);
             setInventories(arr);
         }
@@ -90,22 +90,22 @@ export function LocationDialog(props: Props) {
                     <Divider />
                 </Grid>
                 <Grid size={4}>
-                    <Typography variant="body1">货架编码</Typography>
+                    <Typography variant="body1">Shelf Code</Typography>
                 </Grid>
                 <Grid size={8}>
                     <Typography variant="body2">{shelf.code}</Typography>
                 </Grid>
                 <Grid size={4}>
-                    <Typography variant="body1">货架型号</Typography>
+                    <Typography variant="body1">Shelf Model</Typography>
                 </Grid>
                 <Grid size={8}>
                     <Typography variant="body2">{shelf.model}</Typography>
                 </Grid>
                 <Grid size={4}>
-                    <Typography variant="body1">货架状态</Typography>
+                    <Typography variant="body1">Shelf Status</Typography>
                 </Grid>
                 <Grid size={8}>
-                    <Typography variant="body2">启用 {getYesOrNo(shelf.enabled)} 锁定 {getYesOrNo(tasks.some(x => x.shelfCode === shelf.code))}</Typography>
+                    <Typography variant="body2">Enabled {getYesOrNo(shelf.enabled)} | Locked {getYesOrNo(tasks.some(x => x.shelfCode === shelf.code))}</Typography>
                 </Grid>
             </>
         )
@@ -128,34 +128,34 @@ export function LocationDialog(props: Props) {
         ? (
             <Grid container spacing={0.5} alignItems="center">
                 <Grid size={4}>
-                    <Typography variant="body1">仓储位置</Typography>
+                    <Typography variant="body1">Location</Typography>
                 </Grid>
                 <Grid size={8}>
                     <Typography variant="body2">{`${location.areaCode}/${location.code}`}</Typography>
                 </Grid>
                 <Grid size={4}>
-                    <Typography variant="body1">适配货架型号</Typography>
+                    <Typography variant="body1">Compatible Shelf Models</Typography>
                 </Grid>
                 <Grid size={8}>
                     <Typography variant="body2">{getShelfModels(location)}</Typography>
                 </Grid>
                 <Grid size={4}>
-                    <Typography variant="body1">外部编码</Typography>
+                    <Typography variant="body1">External Code</Typography>
                 </Grid>
                 <Grid size={8}>
                     <Typography variant="body2">{location.externalCode}</Typography>
                 </Grid>
                 <Grid size={4}>
-                    <Typography variant="body1">库位等级</Typography>
+                    <Typography variant="body1">Location Level</Typography>
                 </Grid>
                 <Grid size={8}>
                     <Typography variant="body2">{location.level}</Typography>
                 </Grid>
                 <Grid size={4}>
-                    <Typography variant="body1">库位状态</Typography>
+                    <Typography variant="body1">Location Status</Typography>
                 </Grid>
                 <Grid size={8}>
-                    <Typography variant="body2">启用 {getYesOrNo(location.enabled)} 锁定 {getYesOrNo(tasks.some(x => x.endLocationCode === location.code))}</Typography>
+                    <Typography variant="body2">Enabled {getYesOrNo(location.enabled)} | Locked {getYesOrNo(tasks.some(x => x.endLocationCode === location.code))}</Typography>
                 </Grid>
 
                 {shelfContent}
@@ -167,42 +167,42 @@ export function LocationDialog(props: Props) {
     const buttons = [];
     if (!shelf) {
         if (location?.enabled === true && !locationTasks.some(x => x.endLocationCode === payload.code)) {
-            buttons.push(<Button key="b0" size="small" variant="contained" color="inherit" onClick={transferShelfToHere}>调度货架到此</Button>);
+            buttons.push(<Button key="b0" size="small" variant="contained" color="inherit" onClick={transferShelfToHere}>Dispatch Shelf Here</Button>);
         }
 
         if (locationTasks.length > 0) {
-            buttons.push(<Button key="b1" size="small" variant="contained" color="inherit" onClick={viewTask}>查看任务</Button>);
+            buttons.push(<Button key="b1" size="small" variant="contained" color="inherit" onClick={viewTask}>View Tasks</Button>);
         }
     } else {
         if (locationTasks.length === 0) {
-            buttons.push(<Button key="b2" size="small" variant="contained" color="inherit" onClick={() => transferShelf(shelf.code)}>调度货架</Button>);
+            buttons.push(<Button key="b2" size="small" variant="contained" color="inherit" onClick={() => transferShelf(shelf.code)}>Dispatch Shelf</Button>);
         } else {
             if (locationTasks.length > 0) {
-                buttons.push(<Button key="b3" size="small" variant="contained" color="inherit" onClick={viewTask}>查看任务</Button>);
+                buttons.push(<Button key="b3" size="small" variant="contained" color="inherit" onClick={viewTask}>View Tasks</Button>);
             }
         }
 
         if (shelfInventories.length === 0) {
-            buttons.push(<Button key="b4" size="small" variant="contained" color="inherit" onClick={() => bindInventory(shelf.code)}>绑定库存</Button>);
+            buttons.push(<Button key="b4" size="small" variant="contained" color="inherit" onClick={() => bindInventory(shelf.code)}>Add Inventory</Button>);
         } else if (shelfInventories.length === 1) {
-            buttons.push(<Button key="b5" size="small" variant="contained" color="inherit" onClick={() => editInventory(shelf.code, shelfInventories[0])}>编辑库存</Button>);
-            buttons.push(<Button key="b6" size="small" variant="contained" color="warning" onClick={() => deleteInventory(shelfInventories[0])}>删除库存</Button>);
+            buttons.push(<Button key="b5" size="small" variant="contained" color="inherit" onClick={() => editInventory(shelf.code, shelfInventories[0])}>Edit Inventory</Button>);
+            buttons.push(<Button key="b6" size="small" variant="contained" color="warning" onClick={() => deleteInventory(shelfInventories[0])}>Delete Inventory</Button>);
         } else {
-            buttons.push(<Button key="b7" size="small" variant="contained" color="inherit" onClick={() => viewInventories(shelf.code)}>查看多箱库存</Button>);
+            buttons.push(<Button key="b7" size="small" variant="contained" color="inherit" onClick={() => viewInventories(shelf.code)}>View Multiple Boxes</Button>);
         }
 
         if (locationTasks.length === 0) {
-            buttons.push(<Button key="b8" size="small" variant="contained" color="inherit" onClick={() => editShelf(shelf)}>编辑货架</Button>);
+            buttons.push(<Button key="b8" size="small" variant="contained" color="inherit" onClick={() => editShelf(shelf)}>Edit Shelf</Button>);
         }
     }
 
     if (locationTasks.length === 0 && location) {
-        buttons.push(<Button key="b9" size="small" variant="contained" color="inherit" onClick={() => editLocation(location)}>编辑库位</Button>);
+        buttons.push(<Button key="b9" size="small" variant="contained" color="inherit" onClick={() => editLocation(location)}>Edit Location</Button>);
     }
 
     return (
         <Dialog maxWidth="xs" fullWidth open={open} PaperComponent={DraggableDialogPaperComponent} hideBackdrop disableEscapeKeyDown disableEnforceFocus slotProps={dialogSlotProps}>
-            <DialogTitle style={{ cursor: 'move' }}>{`库位 ${payload.code}`}</DialogTitle>
+            <DialogTitle style={{ cursor: 'move' }}>{`Location ${payload.code}`}</DialogTitle>
             <DialogCloseButton close={onClose} />
             <DialogContent>
                 {locationContent}
@@ -218,37 +218,37 @@ function LocationInventoryPanel({ inventory }: { inventory: InventoryMapModel })
     return (
         <Grid container spacing={0.5} alignItems="center">
             <Grid size={4}>
-                <Typography variant="body1">箱标签</Typography>
+                <Typography variant="body1">Box Label</Typography>
             </Grid>
             <Grid size={8}>
                 <Typography variant="body2">{inventory.code}</Typography>
             </Grid>
             <Grid size={4}>
-                <Typography variant="body1">供应商</Typography>
+                <Typography variant="body1">Supplier</Typography>
             </Grid>
             <Grid size={8}>
                 <Typography variant="body2">{getDisplayName(inventory.supplierCode, inventory.supplierName)}</Typography>
             </Grid>
             <Grid size={4}>
-                <Typography variant="body1">物料</Typography>
+                <Typography variant="body1">Material</Typography>
             </Grid>
             <Grid size={8}>
                 <Typography variant="body2">{getDisplayName(inventory.materialCode, inventory.materialName)}</Typography>
             </Grid>
             <Grid size={4}>
-                <Typography variant="body1">批次号</Typography>
+                <Typography variant="body1">Batch No.</Typography>
             </Grid>
             <Grid size={8}>
                 <Typography variant="body2">{inventory.batchNo}</Typography>
             </Grid>
             <Grid size={4}>
-                <Typography variant="body1">数量</Typography>
+                <Typography variant="body1">Quantity</Typography>
             </Grid>
             <Grid size={8}>
                 <Typography variant="body2">{inventory.qty}</Typography>
             </Grid>
             <Grid size={4}>
-                <Typography variant="body1">状态</Typography>
+                <Typography variant="body1">Status</Typography>
             </Grid>
             <Grid size={8}>
                 <Typography variant="body2">{getInventoryStatusName(inventory.status)}</Typography>
@@ -264,10 +264,10 @@ function LocationInventoriesPanel({ inventories }: { inventories: InventoryMapMo
         elements.push(
             <Fragment key={item[0]}>
                 <Grid size={4}>
-                    <Typography variant="body1">物料</Typography>
+                    <Typography variant="body1">Material</Typography>
                 </Grid>
                 <Grid size={8}>
-                    <Typography variant="body2">{getDisplayName(item[0], item[1][0].materialName)} X{item[1].length}</Typography>
+                    <Typography variant="body2">{getDisplayName(item[0], item[1][0].materialName)} x{item[1].length}</Typography>
                 </Grid>
             </Fragment>
         );

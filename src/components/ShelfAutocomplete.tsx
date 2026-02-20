@@ -33,7 +33,7 @@ export function ShelfAutocomplete(props: { label?: string; required: boolean; di
                     value={{ code: value, model: '', enabled: true, locationCode: null }}
                     inputValue={inputValue}
                     onInputChange={(_, newInputValue) => setInputValue(newInputValue)}
-                    noOptionsText={inputValue.length === 0 ? null : "无匹配项"}
+                    noOptionsText={inputValue.length === 0 ? null : "No matches found"}
                     onChange={(_, option) => onChange(option?.code ?? '')}
                     fullWidth={true}
                     options={options}

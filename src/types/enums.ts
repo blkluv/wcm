@@ -25,20 +25,20 @@ export const transportTaskStatuses = {
 } as const;
 
 const transportTaskStatusNames: { [key: number]: string } = {
-    0: '待执行',
-    1: '异常',
-    2: '执行中',
-    3: '可继续',
-    4: '已完成'
+    0: 'Pending',
+    1: 'Exception',
+    2: 'Executing',
+    3: 'Renewable',
+    4: 'Completed'
 };
-transportTaskStatusNames[-1] = '已中断';
+transportTaskStatusNames[-1] = 'Aborted';
 
 export const inventoryStatuses = {
     qualified: 0
 } as const;
 
 const inventoryStatusNames: { [key: number]: string } = {
-    0: '合格'
+    0: 'Qualified'
 };
 
 export function getYesOrNo(b: boolean) {

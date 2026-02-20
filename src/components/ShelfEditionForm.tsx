@@ -15,7 +15,7 @@ const schema = yup.object({
     code: yup.string().required(),
     model: yup.string().required(),
     enabled: yup.boolean().required(),
-    locationCode: yup.string().notRequired().max(50, '库位最多50个字符').default('')
+    locationCode: yup.string().notRequired().max(50, 'Location cannot exceed 50 characters').default('')
 }).required();
 
 type FormValues = yup.InferType<typeof schema>;
@@ -68,11 +68,11 @@ export const ShelfEditionForm = forwardRef((props: Props, ref: React.Ref<{ submi
     const onSubmit = async (data: FormValues) => {
         if (data.locationCode !== '') {
             if (tasks.some(x => x.endLocationCode === data.locationCode)) {
-                throw new Error('指定的库存存在活动任务');
+                throw new Error('The specified location has active tasks');
             }
 
             if (shelves.some(x => x.code !== shelf.code && x.locationCode === data.locationCode)) {
-                throw new Error('指定的库存存在其他货架');
+                throw new Error('The specified location already has another shelf');
             }
         }
 
@@ -100,12 +100,12 @@ export const ShelfEditionForm = forwardRef((props: Props, ref: React.Ref<{ submi
         <FormProvider {...methods}>
             <Box component="form" noValidate onSubmit={handleSubmit(onSubmit)}>
                 <Stack spacing={1}>
-                    <TextField label="货架编码" variant="outlined" size="small" slotProps={textFieldSlotProps} fullWidth required disabled  {...register('code')} />
+                    <TextField label="Shelf Code" variant="outlined" size="small" slotProps={textFieldSlotProps} fullWidth required disabled  {...register('code')} />
                     <FormControl fullWidth variant="outlined" size="small" required error={!!errors.model}>
-                        <InputLabel>货架型号</InputLabel>
+                        <InputLabel>Shelf Model</InputLabel>
                         <Controller name="model" control={control}
                             render={({ field }) => (
-                                <Select label="货架型号" {...field} value={field.value ?? ''}>
+                                <Select label="Shelf Model" {...field} value={field.value ?? ''}>
                                     {shelfModels.map(x => <MenuItem key={x} value={x}>{x}</MenuItem>)}
                                 </Select>
                             )}
@@ -114,10 +114,10 @@ export const ShelfEditionForm = forwardRef((props: Props, ref: React.Ref<{ submi
                     </FormControl>
                     <Controller name="enabled" control={control}
                         render={({ field }) => (
-                            <FormControlLabel control={<Switch checked={field.value} {...field} name="enabled" />} label="是否启用" />
+                            <FormControlLabel control={<Switch checked={field.value} {...field} name="enabled" />} label="Enabled" />
                         )}
                     />
-                    <LocationAutocomplete label="绑定库位" required={false} />
+                    <LocationAutocomplete label="Assign Location" required={false} />
                 </Stack>
             </Box>
         </FormProvider>

@@ -57,7 +57,7 @@ export function Sidebar() {
                 value={value}
                 inputValue={inputValue}
                 onInputChange={(_, newInputValue) => setInputValue(newInputValue)}
-                noOptionsText={inputValue.length === 0 ? null : "无匹配项"}
+                noOptionsText={inputValue.length === 0 ? null : "No matches found"}
                 onChange={(_, option) => setValue(option ?? '')}
                 fullWidth={true}
                 options={options}

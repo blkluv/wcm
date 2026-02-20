@@ -20,22 +20,22 @@ interface Inventory extends InventoryMapModel {
     locationCode: string;
 }
 
-function search(keyWord: string, locations: LocationMapElementModel[], shelves: ShelfMapElementModel[], inventories: InventoryMapModel[]) {
+function search(keyword: string, locations: LocationMapElementModel[], shelves: ShelfMapElementModel[], inventories: InventoryMapModel[]) {
     const result: SearchResult[] = [];
 
-    if (keyWord === '') {
+    if (keyword === '') {
         return result;
     }
 
-    keyWord = keyWord.toLowerCase();
+    keyword = keyword.toLowerCase();
 
     do {
-        filterTake(locations, x => x.code.toLowerCase().includes(keyWord), maxItem).forEach(x => result.push({ code: x.code, type: '库位', locationCodes: [x.code] }));
+        filterTake(locations, x => x.code.toLowerCase().includes(keyword), maxItem).forEach(x => result.push({ code: x.code, type: 'Location', locationCodes: [x.code] }));
         if (result.length >= maxItem) {
             break;
         }
 
-        filterTake(shelves, x => x.locationCode != null && x.code.toLowerCase().includes(keyWord), maxItem - result.length).forEach(x => result.push({ code: x.code, type: '货架', locationCodes: [x.locationCode!] }));
+        filterTake(shelves, x => x.locationCode != null && x.code.toLowerCase().includes(keyword), maxItem - result.length).forEach(x => result.push({ code: x.code, type: 'Shelf', locationCodes: [x.locationCode!] }));
         if (result.length >= maxItem) {
             break;
         }
@@ -49,15 +49,15 @@ function search(keyWord: string, locations: LocationMapElementModel[], shelves: 
             inventories.filter(x => x.shelfCode === shelf.code).forEach(x => list.push({ ...x, locationCode: shelf.locationCode! }));
         }
 
-        filterTake(list, x => x.code.toLowerCase().includes(keyWord), maxItem - result.length).forEach(x => result.push({ code: x.code, type: '库存', locationCodes: [x.locationCode] }));
+        filterTake(list, x => x.code.toLowerCase().includes(keyword), maxItem - result.length).forEach(x => result.push({ code: x.code, type: 'Inventory', locationCodes: [x.locationCode] }));
         if (result.length >= maxItem) {
             break;
         }
 
         {
-            const groups = groupBy(filterTake(list, x => x.materialCode.toLowerCase().includes(keyWord), maxItem - result.length), x => x.materialCode);
+            const groups = groupBy(filterTake(list, x => x.materialCode.toLowerCase().includes(keyword), maxItem - result.length), x => x.materialCode);
             for (const item of groups) {
-                result.push({ code: item[0], type: '物料', locationCodes: item[1].map(x => x.locationCode) });
+                result.push({ code: item[0], type: 'Material', locationCodes: item[1].map(x => x.locationCode) });
             }
 
             if (result.length >= maxItem) {
@@ -66,9 +66,9 @@ function search(keyWord: string, locations: LocationMapElementModel[], shelves: 
         }
 
         {
-            const groups = groupBy(filterTake(list, x => x.supplierCode.toLowerCase().includes(keyWord), maxItem - result.length), x => x.supplierCode);
+            const groups = groupBy(filterTake(list, x => x.supplierCode.toLowerCase().includes(keyword), maxItem - result.length), x => x.supplierCode);
             for (const item of groups) {
-                result.push({ code: item[0], type: '供应商', locationCodes: item[1].map(x => x.locationCode) });
+                result.push({ code: item[0], type: 'Supplier', locationCodes: item[1].map(x => x.locationCode) });
             }
         }
 
@@ -109,7 +109,7 @@ export function SearchBar(props: Props) {
                         onClose={() => setOpen(false)}
                         inputValue={inputValue}
                         onInputChange={(_, newInputValue) => setInputValue(newInputValue)}
-                        noOptionsText={inputValue.length < 2 ? null : "无匹配项"}
+                        noOptionsText={inputValue.length < 2 ? null : "No matches found"}
                         onChange={(_, option) => setSelectedLocations(option ? option.locationCodes : [])}
                         disablePortal
                         fullWidth={true}
@@ -122,7 +122,7 @@ export function SearchBar(props: Props) {
                                 {option.type}: {option.code}
                             </li>
                         )}
-                        renderInput={(params) => <TextField {...params} size="small" variant="outlined" placeholder="搜索" />}
+                        renderInput={(params) => <TextField {...params} size="small" variant="outlined" placeholder="Search" />}
                     />
                     <IconButton size="medium">
                         <Settings />

@@ -12,8 +12,8 @@ import { customEventTypes } from "../types/enums";
 import type { SelectedElement } from "../types/map";
 
 const schema = yup.object({
-    shelfCode: yup.string().required('请选择货架或在地图上选择').max(50, '货架最多50个字符'),
-    locationCode: yup.string().required('请选择库位或在地图上选择').max(50, '库位最多50个字符')
+    shelfCode: yup.string().required('Please select a shelf or choose one on the map').max(50, 'Shelf cannot exceed 50 characters'),
+    locationCode: yup.string().required('Please select a location or choose one on the map').max(50, 'Location cannot exceed 50 characters')
 }).required();
 
 type FormValues = yup.InferType<typeof schema>;
@@ -99,8 +99,8 @@ export const TransportTaskCreationForm = forwardRef((props: Props, ref: React.Re
         <FormProvider {...methods}>
             <Box component="form" noValidate onSubmit={handleSubmit(onSubmit)}>
                 <Stack spacing={1}>
-                    <ShelfAutocomplete label="货架" required disabled={!!shelfCode} />
-                    <LocationAutocomplete label="库位" required disabled={!!toLocationCode} />
+                    <ShelfAutocomplete label="Shelf" required disabled={!!shelfCode} />
+                    <LocationAutocomplete label="Location" required disabled={!!toLocationCode} />
                 </Stack>
             </Box>
         </FormProvider>

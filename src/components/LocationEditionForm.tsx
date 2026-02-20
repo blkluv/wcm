@@ -12,12 +12,12 @@ import { AreaAutocomplete } from "./AreaAutocomplete";
 import { ShelfModelSelector } from "./ShelfModelSelector";
 
 const schema = yup.object({
-    code: yup.string().required('编码是必须的').max(50, '编码最多50个字符'),
+    code: yup.string().required('Code is required').max(50, 'Code cannot exceed 50 characters'),
     level: yup.number().required().min(1).max(6),
-    externalCode: yup.string().required('外部编码是必须的').max(50, '外部编码最多50个字符'),
-    shelfModels: yup.array().of(yup.string().required('货架型号是必须的')).required('货架型号是必须的').min(1, '货架型号至少选择一项'),
+    externalCode: yup.string().required('External code is required').max(50, 'External code cannot exceed 50 characters'),
+    shelfModels: yup.array().of(yup.string().required('Shelf model is required')).required('Shelf models are required').min(1, 'At least one shelf model must be selected'),
     enabled: yup.boolean().required(),
-    areaCode: yup.string().required('库区是必须的').max(50, '库区最多50个字符')
+    areaCode: yup.string().required('Area is required').max(50, 'Area cannot exceed 50 characters')
 }).required();
 
 type FormValues = yup.InferType<typeof schema>;
@@ -81,14 +81,14 @@ export const LocationEditionForm = forwardRef((props: Props, ref: React.Ref<{ su
         <FormProvider {...methods}>
             <Box component="form" onSubmit={handleSubmit(onSubmit)}>
                 <Stack spacing={1}>
-                    <TextField label="编码" variant="outlined" size="small" disabled slotProps={textFieldSlotProps} fullWidth required error={!!errors.code} helperText={errors.code?.message} {...register('code')} />
-                    <AreaAutocomplete label="库区" required />
-                    <ShelfModelSelector label="货架型号" required />
-                    <NumberField label="等级" size="small" fullWidth required error={!!errors.level} helperText={errors.level?.message} min={1} max={6} defaultValue={defaultValues?.level} onValueChange={x => setValue('level', x ?? 0)} />
-                    <TextField label="外部编码" variant="outlined" size="small" slotProps={textFieldSlotProps} fullWidth required error={!!errors.externalCode} helperText={errors.externalCode?.message} {...register('externalCode')} />
+                    <TextField label="Code" variant="outlined" size="small" disabled slotProps={textFieldSlotProps} fullWidth required error={!!errors.code} helperText={errors.code?.message} {...register('code')} />
+                    <AreaAutocomplete label="Area" required />
+                    <ShelfModelSelector label="Shelf Model" required />
+                    <NumberField label="Level" size="small" fullWidth required error={!!errors.level} helperText={errors.level?.message} min={1} max={6} defaultValue={defaultValues?.level} onValueChange={x => setValue('level', x ?? 0)} />
+                    <TextField label="External Code" variant="outlined" size="small" slotProps={textFieldSlotProps} fullWidth required error={!!errors.externalCode} helperText={errors.externalCode?.message} {...register('externalCode')} />
                     <Controller name="enabled" control={control}
                         render={({ field }) => (
-                            <FormControlLabel control={<Switch checked={field.value} {...field} name="enabled" />} label="是否启用" />
+                            <FormControlLabel control={<Switch checked={field.value} {...field} name="enabled" />} label="Enabled" />
                         )}
                     />
                 </Stack>

@@ -26,15 +26,15 @@ export function LocationEditionDialog(props: Props) {
         }
     };
 
-    return (
+return (
         <Dialog maxWidth="xs" fullWidth open={open} PaperComponent={DraggableDialogPaperComponent} hideBackdrop disableEscapeKeyDown disableEnforceFocus slotProps={dialogSlotProps}>
-            <DialogTitle style={{ cursor: 'move' }}>编辑库位 {payload.location.code}</DialogTitle>
+            <DialogTitle style={{ cursor: 'move' }}>Edit Location {payload.location.code}</DialogTitle>
             <DialogCloseButton close={onClose} />
             <DialogContent>
                 <LocationEditionForm ref={formRef} location={payload.location} />
             </DialogContent>
             <DialogActions>
-                <Button size="small" variant="contained" onClick={handleClick}>提交</Button>
+                <Button size="small" variant="contained" onClick={handleClick}>Submit</Button>
             </DialogActions>
         </Dialog>
     );

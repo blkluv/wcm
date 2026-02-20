@@ -40,8 +40,8 @@ export function TransportTaskDetailDialog(props: Props) {
             return;
         }
 
-        const b = await dialog.confirm(`确定触发开始 ${task.code}？`, { severity: 'warning' });
-        if (b) {
+        const confirmed = await dialog.confirm(`Are you sure you want to start task ${task.code}?`, { severity: 'warning' });
+        if (confirmed) {
             triggerTaskStart(task);
             setTasks([...tasks]);
 
@@ -64,8 +64,8 @@ export function TransportTaskDetailDialog(props: Props) {
             return;
         }
 
-        const b = await dialog.confirm(`确定触发结束 ${task.code}？`, { severity: 'warning' });
-        if (b) {
+        const confirmed = await dialog.confirm(`Are you sure you want to complete task ${task.code}?`, { severity: 'warning' });
+        if (confirmed) {
             triggerTaskEnd(task);
             setTasks(tasks.filter(x => x.code !== task.code));
 
@@ -84,8 +84,8 @@ export function TransportTaskDetailDialog(props: Props) {
             return;
         }
 
-        const b = await dialog.confirm(`确定中断任务 ${task.code}？`, { severity: 'warning' });
-        if (b) {
+        const confirmed = await dialog.confirm(`Are you sure you want to abort task ${task.code}?`, { severity: 'warning' });
+        if (confirmed) {
             abortTask(task);
             setTasks(tasks.filter(x => x.code !== task.code));
             clean(task);
@@ -94,27 +94,27 @@ export function TransportTaskDetailDialog(props: Props) {
 
     return (
         <Dialog maxWidth="xs" fullWidth open={open} PaperComponent={DraggableDialogPaperComponent} hideBackdrop disableEscapeKeyDown disableEnforceFocus slotProps={dialogSlotProps}>
-            <DialogTitle style={{ cursor: 'move' }}>搬运任务 {payload.code}</DialogTitle>
+            <DialogTitle style={{ cursor: 'move' }}>Transport Task {payload.code}</DialogTitle>
             <DialogCloseButton close={onClose} />
             <DialogContent>
                 {
                     task ? (
                         <>
-                            <Typography variant="body1" align="left"><b>任务类型</b> {task.businessTypeName}</Typography>
-                            <Typography variant="body1" align="left"><b>任务编码</b> {task.code}</Typography>
-                            <Typography variant="body1" align="left"><b>状态</b> {getTransportTaskStatusName(task.status)}</Typography>
-                            <Typography variant="body1" align="left"><b>优先级</b> {task.priority}</Typography>
-                            <Typography variant="body1" align="left"><b>AGV编号</b> {task.agvCode}</Typography>
-                            <Typography variant="body1" align="left"><b>货架编码</b> {task.shelfCode}</Typography>
-                            <Typography variant="body1" align="left"><b>源位置</b> {getSourceLocation(task)}</Typography>
-                            <Typography variant="body1" align="left"><b>目的位置</b> {getTargetLocation(task)}</Typography>
-                            <Typography variant="body1" align="left"><b>外部任务编号</b> {task.externalTaskCode}</Typography>
-                            <Typography variant="body1" align="left"><b>创建用户</b> {task.createdBy}</Typography>
-                            <Typography variant="body1" align="left"><b>创建时间</b> {toYYYYMMDDHHmmss(task.createdAt)}</Typography>
-                            <Typography variant="body1" align="left"><b>离开时间</b> {toYYYYMMDDHHmmss(task.leavedAt)}</Typography>
-                            <Typography variant="body1" align="left"><b>到达时间</b> {toYYYYMMDDHHmmss(task.arrivedAt)}</Typography>
-                            <Typography variant="body1" align="left"><b>调度时间</b> {toYYYYMMDDHHmmss(task.scheduledAt)}</Typography>
-                            <Typography variant="body1" align="left"><b>提示信息</b> {task.message}</Typography>
+                            <Typography variant="body1" align="left"><b>Task Type</b> {task.businessTypeName}</Typography>
+                            <Typography variant="body1" align="left"><b>Task Code</b> {task.code}</Typography>
+                            <Typography variant="body1" align="left"><b>Status</b> {getTransportTaskStatusName(task.status)}</Typography>
+                            <Typography variant="body1" align="left"><b>Priority</b> {task.priority}</Typography>
+                            <Typography variant="body1" align="left"><b>AGV ID</b> {task.agvCode}</Typography>
+                            <Typography variant="body1" align="left"><b>Shelf Code</b> {task.shelfCode}</Typography>
+                            <Typography variant="body1" align="left"><b>Source Location</b> {getSourceLocation(task)}</Typography>
+                            <Typography variant="body1" align="left"><b>Destination Location</b> {getTargetLocation(task)}</Typography>
+                            <Typography variant="body1" align="left"><b>External Task No.</b> {task.externalTaskCode}</Typography>
+                            <Typography variant="body1" align="left"><b>Created By</b> {task.createdBy}</Typography>
+                            <Typography variant="body1" align="left"><b>Created At</b> {toYYYYMMDDHHmmss(task.createdAt)}</Typography>
+                            <Typography variant="body1" align="left"><b>Departed At</b> {toYYYYMMDDHHmmss(task.leavedAt)}</Typography>
+                            <Typography variant="body1" align="left"><b>Arrived At</b> {toYYYYMMDDHHmmss(task.arrivedAt)}</Typography>
+                            <Typography variant="body1" align="left"><b>Scheduled At</b> {toYYYYMMDDHHmmss(task.scheduledAt)}</Typography>
+                            <Typography variant="body1" align="left"><b>Message</b> {task.message}</Typography>
                         </>
                     ) : null
                 }
@@ -123,11 +123,11 @@ export function TransportTaskDetailDialog(props: Props) {
                 {
                     task ? (
                         <>
-                            <Button size="small" variant="contained" disabled={!canContinue(task)} color="inherit">继续</Button>
-                            <Button size="small" variant="contained" disabled={!canTriggerStart(task)} onClick={triggerStart} color="inherit">触发开始</Button>
-                            <Button size="small" variant="contained" disabled={!canTriggerEnd(task)} onClick={triggerEnd} color="primary">触发结束</Button>
-                            <Button size="small" variant="contained" disabled={!canAbort(task)} onClick={abort} color="warning">中断</Button>
-                            <Button size="small" variant="contained" disabled={!canRepeat(task)} color="inherit">复制</Button>
+                            <Button size="small" variant="contained" disabled={!canContinue(task)} color="inherit">Continue</Button>
+                            <Button size="small" variant="contained" disabled={!canTriggerStart(task)} onClick={triggerStart} color="inherit">Start</Button>
+                            <Button size="small" variant="contained" disabled={!canTriggerEnd(task)} onClick={triggerEnd} color="primary">Complete</Button>
+                            <Button size="small" variant="contained" disabled={!canAbort(task)} onClick={abort} color="warning">Abort</Button>
+                            <Button size="small" variant="contained" disabled={!canRepeat(task)} color="inherit">Duplicate</Button>
                         </>
                     ) : null
                 }

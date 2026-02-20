@@ -9,14 +9,14 @@ export function ConfirmDialog(props: ConfirmDialogProps) {
 
     return (
         <Dialog maxWidth="xs" fullWidth open={open} onClose={() => onClose(false)}>
-            <DialogTitle>{payload.title ?? '提示'}</DialogTitle>
+            <DialogTitle>{payload.title ?? 'Prompt'}</DialogTitle>
             <DialogContent>{payload.msg}</DialogContent>
             <DialogActions>
                 <Button size="small" variant="contained" color="inherit" disabled={!open} {...cancelButtonProps}>
-                    {payload.cancelText ?? '取消'}
+                    {payload.cancelText ?? 'Cancel'}
                 </Button>
                 <Button size="small" variant="contained" color={payload.severity} disabled={!open} {...okButtonProps}>
-                    {payload.okText ?? '确认'}
+                    {payload.okText ?? 'Confirm'}
                 </Button>
             </DialogActions>
         </Dialog>

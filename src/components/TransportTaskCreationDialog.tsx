@@ -26,15 +26,15 @@ export function TransportTaskCreationDialog(props: Props) {
         }
     };
 
-    return (
+return (
         <Dialog maxWidth="xs" fullWidth open={open} PaperComponent={DraggableDialogPaperComponent} hideBackdrop disableEscapeKeyDown disableEnforceFocus slotProps={dialogSlotProps}>
-            <DialogTitle style={{ cursor: 'move' }}>新增调度任务</DialogTitle>
+            <DialogTitle style={{ cursor: 'move' }}>Create Transport Task</DialogTitle>
             <DialogCloseButton close={onClose} />
             <DialogContent>
                 <TransportTaskCreationForm ref={formRef} shelfCode={payload.shelfCode} toLocationCode={payload.toLocationCode} />
             </DialogContent>
             <DialogActions>
-                <Button size="small" variant="contained" onClick={handleClick}>提交</Button>
+                <Button size="small" variant="contained" onClick={handleClick}>Submit</Button>
             </DialogActions>
         </Dialog>
     );
