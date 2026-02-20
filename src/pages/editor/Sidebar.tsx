@@ -63,7 +63,7 @@ export function Sidebar() {
                 options={options}
                 forcePopupIcon={false}
                 size="small"
-                renderInput={(params) => <TextField {...params} slotProps={textFieldSlotProps} variant="outlined" placeholder="搜索库位" />}
+                renderInput={(params) => <TextField {...params} slotProps={textFieldSlotProps} variant="outlined" placeholder="Search" />}
             />
             <Stack direction="row" justifyContent="flex-start" flexWrap="wrap">
                 {locationElements}
